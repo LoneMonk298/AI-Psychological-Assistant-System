@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识文章管理 - 心理健康AI助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #F8F9FA;
+            color: #171717;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 240px;
+            background-color: #FFFFFF;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            border-right: 1px solid #E5E5E5;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #5A9A8F 0%, #4A857A 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #171717;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #525252;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background-color: #F5F5F5;
+            color: #171717;
+        }
+
+        .menu-item.active {
+            background-color: #5A9A8F;
+            color: white;
+        }
+
+        .menu-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 顶部Header */
+        .header {
+            height: 64px;
+            background-color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .collapse-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .collapse-btn:hover {
+            background-color: #F5F5F5;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .user-info:hover {
+            background-color: #F5F5F5;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background-color: #5A9A8F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #171717;
+        }
+
+        .logout-btn {
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #737373;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: #F5F5F5;
+            color: #DC2626;
+        }
+
+        /* 内容区域 */
+        .content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 24px;
+        }
+
+        /* 筛选行 */
+        .filter-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            gap: 16px;
+        }
+
+        .filter-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 280px;
+            padding: 10px 16px;
+            border: 1px solid #E5E5E5;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #5A9A8F;
+            box-shadow: 0 0 0 3px rgba(90, 154, 143, 0.1);
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border: 1px solid #E5E5E5;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: white;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: #5A9A8F;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: #4A857A;
+            transform: translateY(-1px);
+        }
+
+        /* 表格卡片 */
+        .table-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background-color: #F8F9FA;
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #525252;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .data-table td {
+            padding: 16px 20px;
+            font-size: 14px;
+            color: #171717;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .data-table tr:hover {
+            background-color: #F8F9FA;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .article-title {
+            font-weight: 500;
+            color: #171717;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: #E0F2FE;
+            color: #0369A1;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-published {
+            background-color: #DCFCE7;
+            color: #166534;
+        }
+
+        .status-draft {
+            background-color: #F3F4F6;
+            color: #6B7280;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background-color: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .btn-icon:hover {
+            background-color: #F3F4F6;
+        }
+
+        .btn-icon.edit:hover {
+            background-color: #E0F2FE;
+            color: #0369A1;
+        }
+
+        .btn-icon.delete:hover {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            background-color: #FFFFFF;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .page-btn {
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            border: 1px solid #E5E5E5;
+            background-color: white;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #525252;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            border-color: #5A9A8F;
+            color: #5A9A8F;
+        }
+
+        .page-btn.active {
+            background-color: #5A9A8F;
+            border-color: #5A9A8F;
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 弹窗遮罩 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* 弹窗 */
+        .modal {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 20px;
+            color: #999999;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: #F5F5F5;
+            color: #333333;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333333;
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #DC2626;
+            margin-right: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #E5E5E5;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #5A9A8F;
+            box-shadow: 0 0 0 3px rgba(90, 154, 143, 0.1);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #999999;
+            margin-top: 4px;
+        }
+
+        .form-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #E5E5E5;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.2s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #5A9A8F;
+            box-shadow: 0 0 0 3px rgba(90, 154, 143, 0.1);
+        }
+
+        .upload-area {
+            width: 180px;
+            height: 120px;
+            border: 2px dashed #E5E5E5;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #F8F9FA;
+        }
+
+        .upload-area:hover {
+            border-color: #5A9A8F;
+            background-color: #F0FDFA;
+        }
+
+        .upload-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .upload-text {
+            font-size: 12px;
+            color: #737373;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid #E5E5E5;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            background-color: #F8F9FA;
+        }
+
+        .toolbar-btn {
+            padding: 6px 10px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #525252;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background-color: #E5E5E5;
+        }
+
+        .toolbar-separator {
+            width: 1px;
+            height: 20px;
+            background-color: #E5E5E5;
+            margin: 0 4px;
+        }
+
+        .editor-content {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px;
+            border: 1px solid #E5E5E5;
+            border-radius: 0 0 4px 4px;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .editor-content:focus {
+            outline: none;
+            border-color: #5A9A8F;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #F5F5F5;
+            color: #666666;
+            border: 1px solid #D4D4D4;
+        }
+
+        .btn-secondary:hover {
+            background-color: #E5E5E5;
+        }
+
+        .btn-primary {
+            background-color: #4A857A;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3D6F65;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-left {
+                flex-direction: column;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .modal {
+                width: 95%;
+                max-height: 95vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">AI</div>
+                <span class="logo-text">心理健康AI助手</span>
+            </div>
+
+            <nav class="menu-items">
+                <div class="menu-item" onclick="window.location.href='admin.html'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                    <span>首页/数据分析</span>
+                </div>
+
+                <div class="menu-item active" onclick="window.location.href='articles.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span>知识文章</span>
+                </div>
+
+                <div class="menu-item " onclick="window.location.href='consult.html'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>咨询记录</span>
+                </div>
+
+                <div class="menu-item" onclick="window.location.href='mood.html'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span>情绪日志</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 顶部Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="collapse-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M9 3v18"/>
+                        </svg>
+                    </div>
+                    <h1 class="header-title">知识文章</h1>
+                </div>
+
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">A</div>
+                        <span class="user-name">管理员</span>
+                    </div>
+                    <div class="logout-btn" onclick="logout()">退出</div>
+                </div>
+            </header>
+
+            <!-- 内容区域 -->
+            <div class="content">
+                <h2 class="page-title">知识文章</h2>
+
+                <!-- 筛选行 -->
+                <div class="filter-row">
+                    <div class="filter-left">
+                        <input type="text" class="search-input" placeholder="搜索文章标题...">
+                        <select class="filter-select">
+                            <option value="">全部分类</option>
+                            <option value="stress">压力管理</option>
+                            <option value="emotion">情绪调节</option>
+                            <option value="sleep">睡眠健康</option>
+                            <option value="relationship">人际关系</option>
+                        </select>
+                        <select class="filter-select">
+                            <option value="">全部状态</option>
+                            <option value="published">已发布</option>
+                            <option value="draft">草稿</option>
+                        </select>
+                    </div>
+                    <button class="btn-add" onclick="openModal()">
+                        <span>+</span>
+                        <span>新增文章</span>
+                    </button>
+                </div>
+
+                <!-- 表格卡片 -->
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>文章标题</th>
+                                <th>分类</th>
+                                <th>作者</th>
+                                <th>发布时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="article-title">如何应对职场压力</td>
+                                <td><span class="article-category">压力管理</span></td>
+                                <td>张医生</td>
+                                <td>2024-01-15</td>
+                                <td><span class="status-badge status-published">已发布</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="btn-icon edit" title="编辑">✏️</button>
+                                        <button class="btn-icon delete" title="删除">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="article-title">改善睡眠质量的10个技巧</td>
+                                <td><span class="article-category">睡眠健康</span></td>
+                                <td>李专家</td>
+                                <td>2024-01-14</td>
+                                <td><span class="status-badge status-published">已发布</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="btn-icon edit" title="编辑">✏️</button>
+                                        <button class="btn-icon delete" title="删除">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="article-title">正念冥想入门指南</td>
+                                <td><span class="article-category">情绪调节</span></td>
+                                <td>王咨询师</td>
+                                <td>2024-01-13</td>
+                                <td><span class="status-badge status-published">已发布</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="btn-icon edit" title="编辑">✏️</button>
+                                        <button class="btn-icon delete" title="删除">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="article-title">青少年心理健康家长指南</td>
+                                <td><span class="article-category">人际关系</span></td>
+                                <td>陈医生</td>
+                                <td>2024-01-12</td>
+                                <td><span class="status-badge status-draft">草稿</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="btn-icon edit" title="编辑">✏️</button>
+                                        <button class="btn-icon delete" title="删除">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="article-title">焦虑症的自我疏导方法</td>
+                                <td><span class="article-category">情绪调节</span></td>
+                                <td>刘专家</td>
+                                <td>2024-01-11</td>
+                                <td><span class="status-badge status-published">已发布</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="btn-icon edit" title="编辑">✏️</button>
+                                        <button class="btn-icon delete" title="删除">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- 分页 -->
+                    <div class="pagination">
+                        <button class="page-btn" disabled>上一页</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">4</button>
+                        <button class="page-btn">5</button>
+                        <button class="page-btn">下一页</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增文章弹窗 -->
+    <div class="modal-overlay" id="articleModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">新增文章</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <form id="articleForm">
+                    <!-- 文章标题 -->
+                    <div class="form-row">
+                        <label class="form-label">
+                            <span class="required">*</span>文章标题
+                        </label>
+                        <input type="text" class="form-input" placeholder="请输入文章标题" maxlength="200">
+                        <div class="char-count">0/200</div>
+                    </div>
+
+                    <!-- 所属分类 -->
+                    <div class="form-row">
+                        <label class="form-label">
+                            <span class="required">*</span>所属分类
+                        </label>
+                        <select class="form-input">
+                            <option value="">请选择分类</option>
+                            <option value="stress">压力管理</option>
+                            <option value="emotion">情绪调节</option>
+                            <option value="sleep">睡眠健康</option>
+                            <option value="relationship">人际关系</option>
+                            <option value="career">职场心理</option>
+                        </select>
+                    </div>
+
+                    <!-- 文章摘要 -->
+                    <div class="form-row">
+                        <label class="form-label">
+                            <span class="required">*</span>文章摘要
+                        </label>
+                        <textarea class="form-textarea" placeholder="请输入文章摘要..."></textarea>
+                    </div>
+
+                    <!-- 封面图片 -->
+                    <div class="form-row">
+                        <label class="form-label">封面图片</label>
+                        <div class="upload-area" onclick="document.getElementById('coverUpload').click()">
+                            <div class="upload-icon">📷</div>
+                            <div class="upload-text">点击上传封面</div>
+                            <input type="file" id="coverUpload" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+
+                    <!-- 文章内容 -->
+                    <div class="form-row">
+                        <label class="form-label">
+                            <span class="required">*</span>文章内容
+                        </label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="toolbar-btn">B</button>
+                            <button type="button" class="toolbar-btn"><i>I</i></button>
+                            <button type="button" class="toolbar-btn">U</button>
+                            <div class="toolbar-separator"></div>
+                            <button type="button" class="toolbar-btn">H1</button>
+                            <button type="button" class="toolbar-btn">H2</button>
+                            <button type="button" class="toolbar-btn">H3</button>
+                            <div class="toolbar-separator"></div>
+                            <button type="button" class="toolbar-btn">• 列表</button>
+                            <button type="button" class="toolbar-btn">🔗</button>
+                            <button type="button" class="toolbar-btn">🖼️</button>
+                        </div>
+                        <textarea class="editor-content" placeholder="请输入文章内容..."></textarea>
+                    </div>
+
+                    <!-- 标签 -->
+                    <div class="form-row">
+                        <label class="form-label">标签</label>
+                        <select class="form-input">
+                            <option value="">请选择或输入标签</option>
+                            <option value="anxiety">焦虑</option>
+                            <option value="depression">抑郁</option>
+                            <option value="sleep">失眠</option>
+                            <option value="stress">压力</option>
+                            <option value="mindfulness">正念</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                <button class="btn btn-primary" onclick="saveArticle()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态
+        if (!localStorage.getItem('isAdminLoggedIn')) {
+            window.location.href = 'login.html';
+        }
+
+        // 打开弹窗
+        function openModal() {
+            document.getElementById('articleModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('articleModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 保存文章
+        function saveArticle() {
+            alert('文章保存成功！');
+            closeModal();
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('isAdminLoggedIn');
+            window.location.href = 'login.html';
+        }
+
+        // 点击遮罩关闭弹窗
+        document.getElementById('articleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // 字符计数
+        document.querySelector('.form-input[maxlength="200"]').addEventListener('input', function() {
+            document.querySelector('.char-count').textContent = this.value.length + '/200';
+        });
+
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

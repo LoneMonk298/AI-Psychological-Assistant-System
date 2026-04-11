@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情绪日志管理 - 心理健康AI助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #F8F9FA;
+            color: #171717;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 240px;
+            background-color: #FFFFFF;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            border-right: 1px solid #E5E5E5;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #5A9A8F 0%, #4A857A 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #171717;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #525252;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background-color: #F5F5F5;
+            color: #171717;
+        }
+
+        .menu-item.active {
+            background-color: #5A9A8F;
+            color: white;
+        }
+
+        .menu-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 顶部Header */
+        .header {
+            height: 64px;
+            background-color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .collapse-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .collapse-btn:hover {
+            background-color: #F5F5F5;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .user-info:hover {
+            background-color: #F5F5F5;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background-color: #5A9A8F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #171717;
+        }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: #5A9A8F;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: #4A857A;
+            transform: translateY(-1px);
+        }
+
+        .logout-btn {
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #737373;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: #F5F5F5;
+            color: #DC2626;
+        }
+
+        /* 内容区域 */
+        .content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 24px;
+        }
+
+        /* 筛选行 */
+        .filter-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            gap: 16px;
+        }
+
+        .filter-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 280px;
+            padding: 10px 16px;
+            border: 1px solid #E5E5E5;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #5A9A8F;
+            box-shadow: 0 0 0 3px rgba(90, 154, 143, 0.1);
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border: 1px solid #E5E5E5;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: white;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        /* 表格卡片 */
+        .table-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background-color: #F8F9FA;
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #525252;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .data-table td {
+            padding: 16px 20px;
+            font-size: 14px;
+            color: #171717;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .data-table tr:hover {
+            background-color: #F8F9FA;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar-small {
+            width: 36px;
+            height: 36px;
+            background-color: #5A9A8F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name-text {
+            font-weight: 500;
+        }
+
+        .mood-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mood-emoji {
+            font-size: 20px;
+        }
+
+        .mood-text {
+            font-size: 14px;
+            color: #525252;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .risk-low {
+            background-color: #DCFCE7;
+            color: #166534;
+        }
+
+        .risk-medium {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+
+        .risk-high {
+            background-color: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .btn-detail {
+            padding: 6px 14px;
+            background-color: #5A9A8F;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-detail:hover {
+            background-color: #4A857A;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            background-color: #FFFFFF;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .page-btn {
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            border: 1px solid #E5E5E5;
+            background-color: white;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #525252;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            border-color: #5A9A8F;
+            color: #5A9A8F;
+        }
+
+        .page-btn.active {
+            background-color: #5A9A8F;
+            border-color: #5A9A8F;
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 弹窗遮罩 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* 弹窗 */
+        .modal {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 20px;
+            color: #999999;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: #F5F5F5;
+            color: #333333;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        /* 信息区域 */
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 12px;
+        }
+
+        .info-card {
+            background-color: #F8F9FA;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .info-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #666666;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #333333;
+            font-weight: 500;
+        }
+
+        /* 情绪展示 */
+        .mood-display {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mood-score {
+            font-size: 24px;
+            font-weight: 700;
+            color: #5A9A8F;
+        }
+
+        .mood-main {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #E5E5E5;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #5A9A8F;
+            border-radius: 4px;
+        }
+
+        /* 关键词标签 */
+        .keywords-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .keyword-tag {
+            padding: 4px 12px;
+            background-color: #E0F2FE;
+            color: #0369A1;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* 建议文本 */
+        .advice-text {
+            font-size: 14px;
+            color: #525252;
+            line-height: 1.6;
+            margin-top: 8px;
+            padding: 12px;
+            background-color: #FFFFFF;
+            border-radius: 6px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 16px 24px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #D4D4D4;
+            background-color: #F5F5F5;
+            color: #666666;
+        }
+
+        .btn:hover {
+            background-color: #E5E5E5;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-left {
+                flex-direction: column;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .modal {
+                width: 95%;
+                max-height: 95vh;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">AI</div>
+                <span class="logo-text">心理健康AI助手</span>
+            </div>
+
+            <nav class="menu-items">
+                <div class="menu-item" onclick="window.location.href='admin.html'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                    <span>首页/数据分析</span>
+                </div>
+
+                <div class="menu-item" onclick="window.location.href='articles.html'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span>知识文章</span>
+                </div>
+
+                <div class="menu-item" onclick="window.location.href='consult.html'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>咨询记录</span>
+                </div>
+
+                <div class="menu-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span>情绪日志</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 顶部Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="collapse-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M9 3v18"/>
+                        </svg>
+                    </div>
+                    <h1 class="header-title">情绪日志</h1>
+                </div>
+
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">A</div>
+                        <span class="user-name">管理员</span>
+                    </div>
+                    <div class="logout-btn" onclick="logout()">退出</div>
+                </div>
+            </header>
+
+            <!-- 内容区域 -->
+            <div class="content">
+                <h2 class="page-title">情绪日志记录</h2>
+
+                <!-- 筛选行 -->
+                <div class="filter-row">
+                    <div class="filter-left">
+                        <input type="text" class="search-input" placeholder="搜索用户名...">
+                        <select class="filter-select">
+                            <option value="">全部情绪</option>
+                            <option value="happy">开心</option>
+                            <option value="calm">平静</option>
+                            <option value="sad">难过</option>
+                            <option value="anxious">焦虑</option>
+                            <option value="angry">愤怒</option>
+                        </select>
+                        <select class="filter-select">
+                            <option value="">全部时间</option>
+                            <option value="today">今天</option>
+                            <option value="week">本周</option>
+                            <option value="month">本月</option>
+                        </select>
+                    </div>
+                    <button class="btn-add">
+                        <span>搜索</span>
+                    </button>
+                </div>
+
+                <!-- 表格卡片 -->
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>用户</th>
+                                <th>记录日期</th>
+                                <th>情绪状态</th>
+                                <th>情绪评分</th>
+                                <th>风险等级</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar-small">A</div>
+                                        <span class="user-name-text">allen</span>
+                                    </div>
+                                </td>
+                                <td>2026-02-11</td>
+                                <td>
+                                    <div class="mood-indicator">
+                                        <span class="mood-emoji">😊</span>
+                                        <span class="mood-text">开心</span>
+                                    </div>
+                                </td>
+                                <td>8/10</td>
+                                <td><span class="risk-badge risk-low">低风险</span></td>
+                                <td>
+                                    <button class="btn-detail" onclick="openModal('allen', '2026-02-11', '8/10', '开心', '低风险', '彩票中奖了', '今天心情超级好，买彩票居然中了小奖！', '积极', '85%', '开心、中奖、兴奋', '这份喜悦值得好好享受，建议将这份积极的情绪延续到工作和生活中。')">详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar-small" style="background-color: #E8B339;">L</div>
+                                        <span class="user-name-text">lisa</span>
+                                    </div>
+                                </td>
+                                <td>2026-02-10</td>
+                                <td>
+                                    <div class="mood-indicator">
+                                        <span class="mood-emoji">😰</span>
+                                        <span class="mood-text">焦虑</span>
+                                    </div>
+                                </td>
+                                <td>4/10</td>
+                                <td><span class="risk-badge risk-medium">中风险</span></td>
+                                <td>
+                                    <button class="btn-detail" onclick="openModal('lisa', '2026-02-10', '4/10', '焦虑', '中风险', '工作压力', '最近项目 deadline 临近，压力特别大，晚上睡不着觉。', '消极', '72%', '压力、失眠、焦虑', '建议尝试深呼吸练习和正念冥想，适当调整工作节奏，必要时寻求专业心理咨询。')">详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar-small" style="background-color: #3B82F6;">M</div>
+                                        <span class="user-name-text">mike</span>
+                                    </div>
+                                </td>
+                                <td>2026-02-09</td>
+                                <td>
+                                    <div class="mood-indicator">
+                                        <span class="mood-emoji">😔</span>
+                                        <span class="mood-text">难过</span>
+                                    </div>
+                                </td>
+                                <td>3/10</td>
+                                <td><span class="risk-badge risk-medium">中风险</span></td>
+                                <td>
+                                    <button class="btn-detail" onclick="openModal('mike', '2026-02-09', '3/10', '难过', '中风险', '感情问题', '和女朋友吵架了，心情很糟糕，感觉她不理解我。', '消极', '68%', '感情、争吵、孤独', '感情中的冲突需要双方共同面对，建议冷静下来后好好沟通，表达自己的感受而不是指责对方。')">详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar-small" style="background-color: #8B5CF6;">S</div>
+                                        <span class="user-name-text">sarah</span>
+                                    </div>
+                                </td>
+                                <td>2026-02-08</td>
+                                <td>
+                                    <div class="mood-indicator">
+                                        <span class="mood-emoji">😌</span>
+                                        <span class="mood-text">平静</span>
+                                    </div>
+                                </td>
+                                <td>7/10</td>
+                                <td><span class="risk-badge risk-low">低风险</span></td>
+                                <td>
+                                    <button class="btn-detail" onclick="openModal('sarah', '2026-02-08', '7/10', '平静', '低风险', '冥想练习', '今天完成了30分钟的正念冥想，感觉很放松，心情很平和。', '积极', '78%', '冥想、放松、平静', '坚持冥想练习对情绪调节非常有益，建议保持这个好习惯。')">详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar-small" style="background-color: #EF4444;">T</div>
+                                        <span class="user-name-text">tom</span>
+                                    </div>
+                                </td>
+                                <td>2026-02-07</td>
+                                <td>
+                                    <div class="mood-indicator">
+                                        <span class="mood-emoji">😤</span>
+                                        <span class="mood-text">愤怒</span>
+                                    </div>
+                                </td>
+                                <td>2/10</td>
+                                <td><span class="risk-badge risk-high">高风险</span></td>
+                                <td>
+                                    <button class="btn-detail" onclick="openModal('tom', '2026-02-07', '2/10', '愤怒', '高风险', '被误解', '在公司被领导当众批评，我觉得很不公平，非常生气。', '消极', '45%', '愤怒、委屈、不公', '被当众批评确实令人不适，建议先让自己冷静下来，然后找个合适的时机与领导私下沟通，表达自己的想法。')">详情</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- 分页 -->
+                    <div class="pagination">
+                        <button class="page-btn" disabled>上一页</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">4</button>
+                        <button class="page-btn">5</button>
+                        <button class="page-btn">下一页</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 情绪日记详情弹窗 -->
+    <div class="modal-overlay" id="moodModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">情绪日记详情</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- 用户信息 -->
+                <div class="section">
+                    <h4 class="section-title">用户信息</h4>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <div class="info-label">用户名</div>
+                                <div class="info-value" id="modalUser">allen</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">记录日期</div>
+                                <div class="info-value" id="modalDate">2026-02-11</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 情绪状态 -->
+                <div class="section">
+                    <h4 class="section-title">情绪状态</h4>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <div class="info-label">主要情绪</div>
+                                <div class="mood-display">
+                                    <span class="mood-score" id="modalMoodScore">8/10</span>
+                                    <span class="mood-main" id="modalMood">开心</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">风险等级</div>
+                                <div class="info-value" id="modalRisk">低风险</div>
+                            </div>
+                        </div>
+                        <div class="info-row" style="margin-top: 12px;">
+                            <div class="info-item" style="flex: 1;">
+                                <div class="info-label">睡眠质量</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 80%;"></div>
+                                </div>
+                                <div style="font-size: 12px; color: #666; margin-top: 4px;">4/5</div>
+                            </div>
+                            <div class="info-item" style="flex: 1;">
+                                <div class="info-label">压力水平</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 30%;"></div>
+                                </div>
+                                <div style="font-size: 12px; color: #666; margin-top: 4px;">3/5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 日记内容 -->
+                <div class="section">
+                    <h4 class="section-title">日记内容</h4>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <div class="info-item" style="flex: 1;">
+                                <div class="info-label">情绪触发因素</div>
+                                <div class="info-value" id="modalTrigger">彩票中奖了</div>
+                            </div>
+                        </div>
+                        <div class="info-row" style="margin-top: 12px;">
+                            <div class="info-item" style="flex: 1;">
+                                <div class="info-label">今日感想</div>
+                                <div class="advice-text" id="modalContent">今天心情超级好，买彩票居然中了小奖！</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI情绪分析结果 -->
+                <div class="section">
+                    <h4 class="section-title">AI情绪分析结果</h4>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <div class="info-label">主要情绪</div>
+                                <div class="info-value" id="modalAnalysisMood">积极</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">情绪强度</div>
+                                <div class="info-value" id="modalIntensity">85%</div>
+                            </div>
+                        </div>
+                        <div class="info-row" style="margin-top: 12px;">
+                            <div class="info-item" style="flex: 1;">
+                                <div class="info-label">风险等级</div>
+                                <div class="info-value" style="color: #166534;">正常</div>
+                            </div>
+                            <div class="info-item" style="flex: 1;">
+                                <div class="info-label">情绪性质</div>
+                                <div class="info-value" style="color: #0369A1;">正面情绪</div>
+                            </div>
+                        </div>
+                        <div class="info-row" style="margin-top: 12px;">
+                            <div class="info-item" style="flex: 1;">
+                                <div class="info-label">情绪关键词</div>
+                                <div class="keywords-list" id="modalKeywords">
+                                    <span class="keyword-tag">开心</span>
+                                    <span class="keyword-tag">中奖</span>
+                                    <span class="keyword-tag">兴奋</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-row" style="margin-top: 12px;">
+                            <div class="info-item" style="flex: 1;">
+                                <div class="info-label">专业建议</div>
+                                <div class="advice-text" id="modalAdvice">这份喜悦值得好好享受，建议将这份积极的情绪延续到工作和生活中。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 风险描述 -->
+                <div class="section" style="margin-bottom: 0;">
+                    <h4 class="section-title">风险描述</h4>
+                    <div class="info-card">
+                        <div class="info-value" id="modalRiskDesc" style="color: #166534;">情绪稳定</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态
+        if (!localStorage.getItem('isAdminLoggedIn')) {
+            window.location.href = 'login.html';
+        }
+
+        // 打开弹窗
+        function openModal(user, date, score, mood, risk, trigger, content, analysisMood, intensity, keywords, advice) {
+            document.getElementById('modalUser').textContent = user;
+            document.getElementById('modalDate').textContent = date;
+            document.getElementById('modalMoodScore').textContent = score;
+            document.getElementById('modalMood').textContent = mood;
+            document.getElementById('modalRisk').textContent = risk;
+            document.getElementById('modalTrigger').textContent = trigger;
+            document.getElementById('modalContent').textContent = content;
+            document.getElementById('modalAnalysisMood').textContent = analysisMood;
+            document.getElementById('modalIntensity').textContent = intensity;
+            document.getElementById('modalAdvice').textContent = advice;
+
+            // 更新关键词
+            const keywordsContainer = document.getElementById('modalKeywords');
+            keywordsContainer.innerHTML = '';
+            keywords.split('、').forEach(keyword => {
+                const tag = document.createElement('span');
+                tag.className = 'keyword-tag';
+                tag.textContent = keyword;
+                keywordsContainer.appendChild(tag);
+            });
+
+            // 更新风险颜色
+            const riskValue = document.getElementById('modalRisk');
+            if (risk === '高风险') {
+                riskValue.style.color = '#991B1B';
+            } else if (risk === '中风险') {
+                riskValue.style.color = '#92400E';
+            } else {
+                riskValue.style.color = '#166534';
+            }
+
+            document.getElementById('moodModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('moodModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('isAdminLoggedIn');
+            window.location.href = 'login.html';
+        }
+
+        // 点击遮罩关闭弹窗
+        document.getElementById('moodModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

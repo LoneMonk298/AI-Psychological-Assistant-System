@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 心理健康AI助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #5A9A8F 0%, #4A857A 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            display: flex;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 900px;
+            min-height: 650px;
+        }
+
+        .auth-brand {
+            flex: 1;
+            background: linear-gradient(135deg, #5A9A8F 0%, #4A857A 100%);
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        .brand-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .brand-desc {
+            font-size: 16px;
+            line-height: 1.8;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .brand-robot svg {
+            width: 120px;
+            height: 120px;
+        }
+
+        .auth-form-container {
+            flex: 1;
+            padding: 40px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #171717;
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+            color: #737373;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #5A9A8F;
+            box-shadow: 0 0 0 3px rgba(90, 154, 143, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #A3A3A3;
+        }
+
+        .form-options {
+            margin-bottom: 20px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 13px;
+            color: #525252;
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            accent-color: #5A9A8F;
+            flex-shrink: 0;
+        }
+
+        .checkbox-label a {
+            color: #5A9A8F;
+            text-decoration: none;
+        }
+
+        .checkbox-label a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #5A9A8F;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #4A857A;
+            transform: translateY(-1px);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #525252;
+        }
+
+        .auth-footer a {
+            color: #5A9A8F;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            color: #737373;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #5A9A8F;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                flex-direction: column;
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .auth-brand {
+                padding: 30px;
+            }
+
+            .auth-form-container {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- 左侧品牌区 -->
+        <div class="auth-brand">
+            <div class="brand-content">
+                <h2 class="brand-title">心理AI助手</h2>
+                <p class="brand-desc">
+                    每个深夜，每个焦虑的时刻，我们都在这里。<br>
+                    不必独自承受，让心与心的连接温暖你的每一天
+                </p>
+                <div class="brand-robot">
+                      <img class="robot-svg" src="机器人聊天.svg" alt="机器人聊天" >
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧注册表单 -->
+        <div class="auth-form-container">
+            <a href="index.html" class="back-link">← 返回首页</a>
+            <h2 class="auth-title">创建新账户</h2>
+            <p class="auth-subtitle">填写以下信息开始您的心理健康之旅</p>
+
+            <form class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label class="form-label">用户名</label>
+                    <input type="text" class="form-input" placeholder="请输入用户名" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">电子邮件</label>
+                    <input type="email" class="form-input" placeholder="请输入您的邮箱" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" class="form-input" placeholder="请设置密码（至少6位）" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">确认密码</label>
+                    <input type="password" class="form-input" placeholder="请再次输入密码" required>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required>
+                        <span>我已阅读并同意 <a href="#">用户协议</a> 和 <a href="#">隐私政策</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">注册账户</button>
+            </form>
+
+            <p class="auth-footer">
+                已有账户? <a href="login.html">立即登录</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // 模拟注册成功
+            alert('注册成功！欢迎加入心理健康AI助手');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

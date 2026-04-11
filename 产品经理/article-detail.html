@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章详情 - 心理健康AI助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #F8F9FA;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: linear-gradient(90deg, #E6982E 0%, #8B5CF6 100%);
+            height: 80px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            color: #FFFFFF;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            color: #FFFFFF;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        .nav-link.active {
+            font-weight: 500;
+            border-bottom: 2px solid #FFFFFF;
+        }
+
+        .logout-btn {
+            background: #E6982E;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background: #D4891E;
+        }
+
+        /* 内容区域 */
+        .content-area {
+            display: flex;
+            gap: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* 左侧推荐面板 */
+        .left-panel {
+            width: 300px;
+            flex-shrink: 0;
+        }
+
+        .recommend-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .recommend-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 16px;
+        }
+
+        .recommend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recommend-item {
+            display: flex;
+            gap: 8px;
+            padding: 4px 0;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .recommend-item:hover {
+            opacity: 0.8;
+        }
+
+        .recommend-bar {
+            width: 4px;
+            height: 44px;
+            background: #E6982E;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .recommend-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .recommend-item-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            line-clamp: 1;
+            -webkit-box-orient: vertical;
+        }
+
+        .recommend-item-meta {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        /* 右侧内容区 */
+        .right-panel {
+            flex: 1;
+        }
+
+        /* 文章详情卡片 */
+        .article-detail {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* 返回按钮和面包屑 */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #666666;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #E6982E;
+        }
+
+        .breadcrumb {
+            font-size: 13px;
+            color: #999999;
+        }
+
+        .breadcrumb a {
+            color: #E6982E;
+            text-decoration: none;
+        }
+
+        /* 文章元信息 */
+        .meta-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .article-category {
+            background: #FEF3C7;
+            color: #D4891E;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .article-date {
+            font-size: 13px;
+            color: #999999;
+        }
+
+        .article-views {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            color: #999999;
+        }
+
+        /* 文章标题 */
+        .article-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        /* 摘要框 */
+        .summary-box {
+            background: #F0FDF4;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .summary-icon {
+            width: 20px;
+            height: 20px;
+            color: #22C55E;
+            flex-shrink: 0;
+        }
+
+        .summary-text {
+            font-size: 14px;
+            color: #166534;
+            line-height: 1.6;
+        }
+
+        /* 作者信息 */
+        .author-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #E6982E, #8B5CF6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .author-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .author-title {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        /* 文章内容 */
+        .article-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .article-content h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1F2937;
+            margin: 32px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #F3F4F6;
+        }
+
+        .article-content h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+            margin: 24px 0 12px;
+        }
+
+        .article-content p {
+            margin-bottom: 16px;
+        }
+
+        .article-content ul {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .article-content li {
+            margin-bottom: 8px;
+        }
+
+        .article-content strong {
+            color: #1F2937;
+        }
+
+        /* 标签区 */
+        .tags-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .tags-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 12px;
+        }
+
+        .tags-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #F3F4F6;
+            color: #666666;
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag:hover {
+            background: #E6982E;
+            color: #FFFFFF;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .left-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 16px;
+            }
+
+            .nav-right {
+                gap: 16px;
+            }
+
+            .nav-link {
+                font-size: 13px;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .article-detail {
+                padding: 20px;
+            }
+
+            .article-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="nav-content">
+            <div class="logo-section">
+                <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>
+                </svg>
+                <span class="logo-text">心理健康知识库</span>
+            </div>
+            <div class="nav-right">
+                <a href="user.html" class="nav-link">首页</a>
+                <a href="chat.html" class="nav-link">AI咨询</a>
+                <a href="diary.html" class="nav-link">情绪日记</a>
+                <a href="knowledge.html" class="nav-link active">知识库</a>
+                <button class="logout-btn" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 内容区域 -->
+    <div class="content-area">
+        <!-- 左侧推荐面板 -->
+        <aside class="left-panel">
+            <div class="recommend-card">
+                <h3 class="recommend-title">推荐阅读</h3>
+                <div class="recommend-list">
+                    <div class="recommend-item" onclick="goToArticle(1)">
+                        <div class="recommend-bar"></div>
+                        <div class="recommend-content">
+                            <div class="recommend-item-title">如何缓解工作压力</div>
+                            <div class="recommend-item-meta">阅读量 2.3k</div>
+                        </div>
+                    </div>
+                    <div class="recommend-item" onclick="goToArticle(2)">
+                        <div class="recommend-bar"></div>
+                        <div class="recommend-content">
+                            <div class="recommend-item-title">改善睡眠质量的10个技巧</div>
+                            <div class="recommend-item-meta">阅读量 1.8k</div>
+                        </div>
+                    </div>
+                    <div class="recommend-item" onclick="goToArticle(3)">
+                        <div class="recommend-bar"></div>
+                        <div class="recommend-content">
+                            <div class="recommend-item-title">正念冥想入门指南</div>
+                            <div class="recommend-item-meta">阅读量 3.1k</div>
+                        </div>
+                    </div>
+                    <div class="recommend-item" onclick="goToArticle(4)">
+                        <div class="recommend-bar"></div>
+                        <div class="recommend-content">
+                            <div class="recommend-item-title">焦虑情绪的自我疏导</div>
+                            <div class="recommend-item-meta">阅读量 2.7k</div>
+                        </div>
+                    </div>
+                    <div class="recommend-item" onclick="goToArticle(5)">
+                        <div class="recommend-bar"></div>
+                        <div class="recommend-content">
+                            <div class="recommend-item-title">建立健康的人际关系</div>
+                            <div class="recommend-item-meta">阅读量 1.5k</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 右侧内容区 -->
+        <main class="right-panel">
+            <article class="article-detail">
+                <!-- 头部 -->
+                <div class="header-row">
+                    <a href="knowledge.html" class="back-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+                        </svg>
+                        返回列表
+                    </a>
+                    <div class="breadcrumb">
+                        <a href="knowledge.html">知识库</a> > <span>文章详情</span>
+                    </div>
+                </div>
+
+                <!-- 元信息 -->
+                <div class="meta-header">
+                    <span class="article-category">压力管理</span>
+                    <span class="article-date">2026-01-15</span>
+                    <span class="article-views">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        2.3k
+                    </span>
+                </div>
+
+                <!-- 标题 -->
+                <h1 class="article-title">学生心理压力应对策略</h1>
+
+                <!-- 摘要 -->
+                <div class="summary-box">
+                    <svg class="summary-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span class="summary-text">面对学业压力和考试焦虑，学会正确的应对方法至关重要。本文将介绍几种科学有效的压力管理技巧，帮助学生群体更好地调节心理状态。</span>
+                </div>
+
+                <!-- 作者信息 -->
+                <div class="author-row">
+                    <div class="author-info">
+                        <div class="author-avatar">李</div>
+                        <div class="author-meta">
+                            <span class="author-name">李明博士</span>
+                            <span class="author-title">临床心理学专家</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文章内容 -->
+                <div class="article-content">
+                    <p>在当今竞争激烈的教育环境中，学生面临着前所未有的学业压力。考试、升学、人际交往等多重压力交织在一起，给许多学生的心理健康带来了挑战。如何科学有效地应对这些压力，成为了每个学生都需要学习的重要课题。</p>
+
+                    <h2>一、认识压力的来源</h2>
+                    <p>学生群体面临的压力主要来自以下几个方面：</p>
+                    <ul>
+                        <li><strong>学业压力</strong>：考试成绩、作业量、升学竞争等带来的压力</li>
+                        <li><strong>人际关系</strong>：与同学、老师、家长的相处问题</li>
+                        <li><strong>自我期望</strong>：对自己的高要求和完美主义倾向</li>
+                        <li><strong>未来规划</strong>：对前途和职业发展的迷茫与焦虑</li>
+                    </ul>
+
+                    <h2>二、科学的压力应对策略</h2>
+
+                    <h3>1. 时间管理技巧</h3>
+                    <p>良好的时间管理是缓解学业压力的基础。建议采用"番茄工作法"，将学习时间分割为25分钟的专注时段和5分钟的休息时段。同时，制定合理的每日计划，将大任务分解为小目标，避免因任务堆积而产生焦虑。</p>
+
+                    <h3>2. 正念放松练习</h3>
+                    <p>正念冥想被科学研究证明是有效的减压方法。每天花费10-15分钟进行呼吸冥想，可以帮助大脑从紧张状态中恢复平静。练习时，找一个安静的地方，专注于自己的呼吸，当思绪飘走时温和地将注意力带回。</p>
+
+                    <h3>3. 运动与身体健康</h3>
+                    <p>规律的身体锻炼不仅能增强体质，还能有效缓解心理压力。运动时身体会分泌内啡肽，这种"快乐激素"能够改善情绪状态。建议每周进行至少3次、每次30分钟的中等强度运动，如慢跑、游泳或打球。</p>
+
+                    <h3>4. 建立支持系统</h3>
+                    <p>不要独自面对压力。与家人、朋友或老师分享你的困扰，寻求他们的理解和支持。如果感到压力难以自我调节，也可以寻求学校心理咨询师或专业心理机构的帮助。</p>
+
+                    <h2>三、培养积极的思维模式</h2>
+                    <p>压力本身并不可怕，关键在于我们如何看待和应对它。尝试将挑战视为成长的机会，而不是威胁。当遇到困难时，问自己："这件事三年后还重要吗？""我能从中学到什么？"这种认知重构能够帮助我们以更积极的态度面对压力。</p>
+
+                    <h2>结语</h2>
+                    <p>压力是人生不可避免的一部分，但我们可以学会与它共处。通过科学的时间管理、正念练习、规律运动和积极思维，每个学生都能培养出强大的心理韧性，在学业和生活中保持健康的身心状态。记住，寻求帮助不是软弱的表现，而是智慧的体现。</p>
+                </div>
+
+                <!-- 标签 -->
+                <div class="tags-section">
+                    <div class="tags-label">相关标签</div>
+                    <div class="tags-list">
+                        <span class="tag">压力管理</span>
+                        <span class="tag">学生心理</span>
+                        <span class="tag">考试焦虑</span>
+                        <span class="tag">正念冥想</span>
+                        <span class="tag">心理健康</span>
+                    </div>
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <script>
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('isUserLoggedIn');
+            window.location.href = 'login.html';
+        }
+
+        // 跳转到文章详情
+        function goToArticle(id) {
+            window.location.href = `article-detail.html?id=${id}`;
+        }
+
+        // 获取URL参数
+        function getUrlParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 页面加载时获取文章ID
+        document.addEventListener('DOMContentLoaded', function() {
+            const articleId = getUrlParam('id');
+            if (articleId) {
+                console.log('加载文章ID:', articleId);
+                // 实际应用中这里会根据ID加载对应的文章内容
+            }
+        });
+    </script>
+</body>
+</html>
