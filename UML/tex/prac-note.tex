@@ -1,606 +1,366 @@
 %-------------------------------------------------
 % FileName: prac-note.tex
 % Author: 
-% Version: 
-% Description: 实践记录（优化版）
+% Version: 1.0
+% Description: 实践记录（对齐送花系统规格书格式）
 %------------------------------------------------- 
 
 % 断页
 \clearpage
 
+% 修复章节编号层级（section无前置0、层级规范）
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+% 目录深度 & 编号深度
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
 
 % 生成目录
 \tableofcontents
 \newpage
 
-\chapter{用例说明}
-
+\chapter{软件需求规格说明书}
 
 \section{概述}
-本文档描述AI心理健康助手平台的参与者及参与者与系统交互的情景，是系统功能的描述。本文档供参与系统构建各方参考。
+\subsection{目的}
+编写本文档旨在统一项目参与各方对系统业务功能与软件需求的认知，作为项目设计、开发、测试、交付与维护的统一依据。
+本文档可作为项目组成员快速熟悉业务的参考资料，同时为后续系统迭代、功能改造、版本升级提供标准化文档支撑。
 
-\vspace{5pt}
-\hrulefill
-\vspace{10pt}
+\subsection{范围}
+本文档针对「AI心理健康助手平台」Web 系统及后台管理子系统进行需求定义，包含用户端功能、管理员运维功能、AI 交互能力、数据记录与权限管控等全部业务场景。
 
-\section{系统的参与者}
+\subsection{定义、缩略语及缩写}
+本文档无特殊专业定义、缩略语与专用缩写说明。
 
-\subsection{潜在用户}
-未注册的平台访客，可浏览平台公开信息，主要需求为注册账户、了解平台功能。
+\subsection{参考资料}
+本文档无外部参考资料。
 
-\subsection{注册用户}
-已注册账户的用户，可使用AI咨询、情绪日记、知识库浏览等核心功能。
+\subsection{文档概貌}
+本文档依次阐述系统整体概述、参与者角色、核心用例、业务流程、约束条件与非功能需求，通过用例模型完整描述用户与系统的交互逻辑，结合功能性与非功能要求，形成完整、规范的软件需求规格说明。
 
-\subsection{管理员}
-平台运营方人员，负责管理文章、查看用户咨询与情绪记录。
-
-\subsection{访客}
-未注册用户，可浏览平台首页与知识库公开内容。
-
-\vspace{5pt}
-\hrulefill
-\vspace{10pt}
-
-\section{用例清单}
-\begin{tabular}{|p{1.5cm}<{\centering}|p{2.5cm}<{\centering}|p{3cm}<{\centering}|p{1.5cm}<{\centering}|}
-    \hline
-    \textbf{用例编号} & \textbf{用例名称} & \textbf{主执行者} & \textbf{优先级} \\
-    \hline
-    UC1 & 用户注册 & 潜在用户 & 高 \\
-    UC2 & 用户登录 & 注册用户/管理员 & 高 \\
-    UC3 & AI咨询聊天 & 注册用户 & 高 \\
-    UC4 & 记录情绪日记 & 注册用户 & 高 \\
-    UC5 & 浏览知识库 & 注册用户/访客 & 中 \\
-    UC6 & 管理文章 & 管理员 & 中 \\
-    UC7 & 查看咨询记录 & 管理员 & 中 \\
-    UC8 & 查看情绪记录 & 管理员 & 中 \\
-    \hline
-\end{tabular}
-
-\vspace{5pt}
-\hrulefill
-\vspace{10pt}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      UC1 用户注册
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UC1：用户注册}
-\paragraph{主执行者：} 潜在用户
-\paragraph{前置条件：} 用户进入系统注册页面
-\paragraph{后置条件：} 用户信息已保存，新账户已创建
-
-\subsection{涉众利益}
-\begin{itemize}[leftmargin=*]
-    \item 潜在用户：希望注册流程简单快捷，保护个人隐私
-    \item 平台运营方：希望获得有效的用户信息，确保账户安全
-\end{itemize}
-
-\subsection{基本路径}
-\begin{enumerate}
-    \item 潜在用户请求注册
-    \item 系统显示注册界面
-    \item 潜在用户提交注册信息（用户名、邮箱、密码、确认密码）
-    \item 系统验证注册信息格式正确且充分
-    \item 系统加密保存用户信息，生成用户账户
-    \item 系统提示注册成功，自动跳转登录页面
-\end{enumerate}
-
-\subsection{扩展}
+\section{总体说明}
+\subsection{用例模型概览}
+\subsubsection{系统的参与者（Actors）}
 \begin{itemize}
-    \item[4a] 用户名已存在：系统提示“用户名已被使用”，返回步骤3
-    \item[4b] 邮箱格式不正确：系统提示“请输入有效的邮箱地址”，返回步骤3
-    \item[4c] 密码强度不足：系统提示“密码需包含至少6个字符”，返回步骤3
-    \item[4d] 两次密码不一致：系统提示“两次输入的密码不一致”，返回步骤3
-    \item[4e] 信息填写不完整：系统提示“请填写所有必填项”，返回步骤3
+    \item 访客：未注册匿名用户，仅可访问平台公开内容与公共资讯。
+    \item 注册用户：完成账号注册并正常登录的使用者，可使用 AI 咨询、情绪日记、知识库查阅等核心业务功能。
+    \item 管理员：平台运营与运维管理人员，负责内容维护、用户数据查看、风险内容监测与后台管控。
 \end{itemize}
 
-\subsection{字段列表}
-\begin{tabular}{|c|c|c|l|}
-    \hline
-    字段名 & 类型 & 必填 & 规则 \\
-    \hline
-    用户名 & 文本 & 是 & 3-20字符，字母/数字/下划线 \\
-    邮箱 & 邮箱 & 是 & 有效邮箱格式 \\
-    密码 & 密码 & 是 & 6-20字符 \\
-    确认密码 & 密码 & 是 & 与密码一致 \\
-    \hline
-\end{tabular}
+\subsubsection{系统主要用例}
+\textbf{登录系统}
 
-\subsection{业务规则}
-\begin{itemize}[leftmargin=*]
-    \item 用户名全局唯一，不可重复
-    \item 邮箱地址全局唯一，不可重复
-    \item 密码需加密存储
-    \item 注册成功后自动创建用户档案
-\end{itemize}
+参与者：注册用户、管理员。
+用户进入登录页面填写账号与密码并提交，系统完成身份校验，校验通过后按角色权限跳转对应首页；校验失败则给出标准化错误提示。
 
-\subsection{非功能需求}
-\begin{itemize}[leftmargin=*]
-    \item 注册响应时间 < 2秒
-    \item 密码传输需HTTPS加密
-    \item 支持邮箱验证
-\end{itemize}
+\textbf{浏览平台内容}
 
-\vspace{5pt}
-\hrulefill
+参与者：访客、注册用户。
+所有访问者均可正常浏览平台首页、心理健康科普资讯、公开知识库文章，查看内容详情与基础分类信息。
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      UC2 用户登录
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UC2：用户登录}
-\paragraph{主执行者：} 注册用户/管理员
-\paragraph{前置条件：} 用户已注册账户
-\paragraph{后置条件：} 用户登录系统，获得对应角色权限
+\textbf{用户注册}
 
-\subsection{涉众利益}
-\begin{itemize}[leftmargin=*]
-    \item 用户：希望快速安全地进入系统
-    \item 平台：需要验证用户身份，区分普通用户和管理员权限
-\end{itemize}
+参与者：访客。
+匿名访客通过填写基础账号信息完成账号注册，系统校验字段合法性与唯一性，完成账号初始化与基础档案创建。
 
-\subsection{基本路径}
-\begin{enumerate}
-    \item 用户访问登录页面
-    \item 系统显示登录界面
-    \item 用户输入用户名和密码
-    \item 用户提交登录请求
-    \item 系统验证用户名和密码匹配
-    \item 系统根据用户角色跳转对应首页
-    \item 系统记录登录状态
-\end{enumerate}
+\textbf{AI咨询聊天}
 
-\subsection{扩展}
-\begin{itemize}
-    \item[5a] 用户名不存在：系统提示“用户名或密码错误”，返回步骤3
-    \item[5b] 密码错误：系统提示“用户名或密码错误”，返回步骤3
-    \item[5c] 账户被禁用：系统提示“账户已被禁用，请联系管理员”，用例终止
-\end{itemize}
+参与者：注册用户。
+登录用户进入智能咨询模块，与 AI 心理健康助手进行实时对话交互，系统统一管理会话上下文并持久化保存咨询记录。
 
-\subsection{字段列表}
-\begin{tabular}{|c|c|c|l|}
-    \hline
-    字段名 & 类型 & 必填 & 规则 \\
-    \hline
-    用户名 & 文本 & 是 & 已注册的用户名 \\
-    密码 & 密码 & 是 & 对应密码 \\
-    \hline
-\end{tabular}
+\textbf{记录情绪日记}
 
-\subsection{业务规则}
-\begin{itemize}[leftmargin=*]
-    \item 验证失败不区分用户名和密码错误，防止暴力破解
-    \item 未登录用户访问管理端自动跳转登录页面
-\end{itemize}
+参与者：注册用户。
+用户自主填写情绪状态、压力水平、生活事件、睡眠情况等个人心理数据，形成长期情绪档案，用于自我监测与后台风险筛查。
 
-\subsection{非功能需求}
-\begin{itemize}[leftmargin=*]
-    \item 登录响应时间 < 2秒
-    \item 支持记住密码
-    \item 支持多账户登录
-\end{itemize}
+\textbf{浏览知识库}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      UC3 AI咨询聊天
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UC3：AI咨询聊天}
-\paragraph{主执行者：} 注册用户
-\paragraph{前置条件：} 用户已登录系统
-\paragraph{后置条件：} 咨询会话记录已保存
+参与者：访客、注册用户。
+支持按分类、关键词检索心理科普文章，提供分页浏览、内容阅读等基础资讯服务。
 
-\subsection{涉众利益}
-\begin{itemize}[leftmargin=*]
-    \item 用户：获得及时的心理支持与情绪疏导
-    \item 平台：积累咨询数据，优化AI服务质量与安全性
-\end{itemize}
+\textbf{管理文章}
 
-\subsection{基本路径}
-\begin{enumerate}
-    \item 用户进入AI咨询页面
-    \item 系统显示聊天界面，加载历史会话
-    \item 系统显示AI助手欢迎消息
-    \item 用户输入咨询内容或使用快捷提示
-    \item 系统发送消息至AI服务
-    \item AI生成回复内容
-    \item 系统显示AI回复
-    \item 用户继续对话或结束会话
-\end{enumerate}
+参与者：管理员。
+后台管理人员对知识库文章执行新增、编辑、上下架、删除等全生命周期内容管理操作。
 
-\subsection{扩展}
-\begin{itemize}
-    \item[4a] 使用快捷提示：系统自动填入并发送，继续步骤5
-    \item[6a] AI响应超时：提示“AI正在思考中”，超过10秒提示网络繁忙
-    \item[6b] 检测到高风险言论：触发安全提示，显示紧急援助联系方式，标记高风险会话
-    \item[8a] 用户新建对话：创建新会话，清空窗口并重新显示欢迎消息
-\end{itemize}
+\textbf{查看咨询记录}
 
-\subsection{字段列表}
-\begin{tabular}{|c|c|c|l|}
-    \hline
-    字段名 & 类型 & 必填 & 说明 \\
-    \hline
-    会话ID & 文本 & 是 & 唯一标识一次咨询 \\
-    消息内容 & 长文本 & 是 & 用户/AI对话内容 \\
-    消息角色 & 枚举 & 是 & user/ai \\
-    发送时间 & 时间戳 & 是 & 消息发送时间 \\
-    \hline
-\end{tabular}
+参与者：管理员。
+管理员在权限范围内查看全体用户 AI 咨询会话列表、对话内容与访问时间，支持多条件筛选与分页查询。
 
-\subsection{业务规则}
-\begin{itemize}[leftmargin=*]
-    \item 单条消息长度不超过500字符
-    \item 支持Enter发送、Shift+Enter换行
-    \item 历史会话保留最近20条
-    \item 高风险内容必须触发预警与援助信息
-\end{itemize}
+\textbf{查看情绪记录}
 
-\subsection{非功能需求}
-\begin{itemize}[leftmargin=*]
-    \item AI响应时间 < 3秒
-    \item 消息实时显示，无延迟
-    \item 支持断网重连（未来版本）
-\end{itemize}
+参与者：管理员。
+集中查看用户提交的情绪日记数据，结合风险标签识别高危心理状态，为平台风控与人文关怀提供数据支撑。
 
-\vspace{5pt}
-\hrulefill
+\subsubsection{用例视图}
+本平台用例视图围绕访客、注册用户、管理员三类核心参与者构建，完整呈现不同角色与系统功能的关联关系，明确权限边界与业务交互范围。
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      UC4 记录情绪日记
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UC4：记录情绪日记}
-\paragraph{主执行者：} 注册用户
-\paragraph{前置条件：} 用户已登录系统
-\paragraph{后置条件：} 情绪记录已保存到系统
-
-\subsection{涉众利益}
-\begin{itemize}[leftmargin=*]
-    \item 用户：记录情绪变化，获取个性化建议
-    \item 平台：积累情绪数据，提供精准服务
-\end{itemize}
-
-\subsection{基本路径}
-\begin{enumerate}
-    \item 用户进入情绪日记页面
-    \item 系统显示情绪评分卡片
-    \item 用户进行1–10分情绪评分
-    \item 系统更新评分与对应情绪标签
-    \item 用户选择主要情绪标签
-    \item 系统高亮选中标签
-    \item 用户填写触发因素、想法、睡眠与压力水平
-    \item 用户点击保存
-    \item 系统验证必填项
-    \item 系统保存记录
-    \item 系统提示保存成功
-\end{enumerate}
-
-\subsection{扩展}
-\begin{itemize}
-    \item[3a] 用户重新评分：更新分数与标签，返回步骤4
-    \item[9a] 未选择情绪评分：提示并返回步骤3
-    \item[9b] 未选择主要情绪：提示并返回步骤5
-    \item[8a] 用户清空表单：重置所有内容，返回步骤2
-\end{itemize}
-
-\subsection{字段列表}
-\begin{tabular}{|c|c|c|l|}
-    \hline
-    字段名 & 类型 & 必填 & 范围 \\
-    \hline
-    情绪评分 & 数字 & 是 & 1–10分 \\
-    主要情绪 & 数组 & 是 & 预定义标签 \\
-    触发因素 & 文本 & 否 & 200字符以内 \\
-    此刻想法 & 长文本 & 否 & 500字符以内 \\
-    睡眠质量 & 数字 & 否 & 1–5分 \\
-    压力水平 & 数字 & 否 & 1–5分 \\
-    记录日期 & 日期 & 是 & 系统自动生成 \\
-    \hline
-\end{tabular}
-
-\subsection{业务规则}
-\begin{itemize}[leftmargin=*]
-    \item 1–3消极、4–6中性、7–10积极
-    \item 最多选择3个情绪标签
-    \item 每日可多次记录
-\end{itemize}
-
-\subsection{非功能需求}
-\begin{itemize}[leftmargin=*]
-    \item 保存响应时间 < 1秒
-    \item 表单数据临时缓存，防止丢失
-\end{itemize}
-
-\vspace{5pt}
-\hrulefill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      UC5 浏览知识库
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UC5：浏览知识库}
-\paragraph{主执行者：} 注册用户/访客
-\paragraph{前置条件：} 用户访问知识库页面
-\paragraph{后置条件：} 用户获取心理健康知识
-
-\subsection{涉众利益}
-\begin{itemize}[leftmargin=*]
-    \item 用户：学习心理健康知识，自我调节
-    \item 平台：传播健康理念，提升用户粘性
-\end{itemize}
-
-\subsection{基本路径}
-\begin{enumerate}
-    \item 用户进入知识库列表页
-    \item 系统显示文章列表与分类
-    \item 系统加载推荐内容
-    \item 用户浏览文章列表
-    \item 用户点击文章标题
-    \item 系统显示文章详情
-    \item 用户阅读内容
-    \item 用户可查看同类文章
-\end{enumerate}
-
-\subsection{扩展}
-\begin{itemize}
-    \item[2a] 按分类筛选：显示对应分类文章
-    \item[2b] 关键词搜索：显示匹配结果
-    \item[4a] 切换分页：加载对应页内容
-\end{itemize}
-
-\subsection{字段列表}
-\begin{tabular}{|c|c|c|l|}
-    \hline
-    字段名 & 类型 & 必填 & 说明 \\
-    \hline
-    文章标题 & 文本 & 是 & 文章标题 \\
-    文章分类 & 枚举 & 是 & 压力/睡眠/情绪等 \\
-    摘要 & 文本 & 是 & 200字内 \\
-    内容 & 富文本 & 是 & 正文 \\
-    阅读量 & 数字 & 否 & 累计次数 \\
-    发布日期 & 日期 & 是 & 发布时间 \\
-    \hline
-\end{tabular}
-
-\subsection{业务规则}
-\begin{itemize}[leftmargin=*]
-    \item 按发布时间倒序排列
-    \item 每页显示6篇文章
-    \item 阅读时阅读量+1
-\end{itemize}
-
-\subsection{非功能需求}
-\begin{itemize}[leftmargin=*]
-    \item 列表加载时间 < 2秒
-    \item 响应式适配移动端
-\end{itemize}
-
-\vspace{5pt}
-\hrulefill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      UC6 管理文章
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UC6：管理文章}
-\paragraph{主执行者：} 管理员
-\paragraph{前置条件：} 管理员已登录系统
-\paragraph{后置条件：} 文章已新增/修改/删除
-
-\subsection{涉众利益}
-\begin{itemize}[leftmargin=*]
-    \item 管理员：高效维护知识库内容
-    \item 用户：获取准确、最新的知识文章
-\end{itemize}
-
-\subsection{基本路径}
-\begin{enumerate}
-    \item 管理员进入文章管理页
-    \item 系统显示文章列表
-    \item 管理员点击新增文章
-    \item 系统打开编辑弹窗
-    \item 管理员填写标题、分类、摘要、内容、标签
-    \item 管理员点击保存
-    \item 系统校验必填项
-    \item 系统保存文章
-    \item 刷新列表并提示成功
-\end{enumerate}
-
-\subsection{扩展}
-\begin{itemize}
-    \item[3a] 编辑文章：加载原数据，修改后保存
-    \item[3b] 删除文章：二次确认后删除并刷新列表
-    \item[7a] 信息不完整：提示并高亮缺失字段
-\end{itemize}
-
-\subsection{字段列表}
-\begin{tabular}{|c|c|c|l|}
-    \hline
-    字段名 & 类型 & 必填 & 规则 \\
-    \hline
-    文章标题 & 文本 & 是 & 5–100字符 \\
-    文章分类 & 下拉 & 是 & 预设分类 \\
-    摘要 & 文本域 & 是 & 50–200字符 \\
-    封面图片 & 文件 & 否 & JPG/PNG≤2MB \\
-    内容 & 富文本 & 是 & HTML格式 \\
-    标签 & 文本 & 否 & 最多5个 \\
-    \hline
-\end{tabular}
-
-\subsection{业务规则}
-\begin{itemize}[leftmargin=*]
-    \item 分类内标题唯一
-    \item 删除需二次确认
-    \item 发布后用户可见
-\end{itemize}
-
-\subsection{非功能需求}
-\begin{itemize}[leftmargin=*]
-    \item 弹窗打开时间 < 1秒
-    \item 富文本支持基础排版
-\end{itemize}
-
-\vspace{5pt}
-\hrulefill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      UC7 查看咨询记录
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UC7：查看咨询记录}
-\paragraph{主执行者：} 管理员
-\paragraph{前置条件：} 管理员已登录系统
-\paragraph{后置条件：} 管理员已查看会话详情
-
-\subsection{涉众利益}
-\begin{itemize}[leftmargin=*]
-    \item 管理员：监督服务质量，识别高风险用户
-    \item 平台：保障咨询合规与用户安全
-\end{itemize}
-
-\subsection{基本路径}
-\begin{enumerate}
-    \item 管理员进入咨询管理页
-    \item 系统显示会话列表
-    \item 管理员浏览记录
-    \item 点击查看详情
-    \item 系统加载会话数据
-    \item 展示详情弹窗
-    \item 查看对话内容
-    \item 关闭返回列表
-\end{enumerate}
-
-\subsection{扩展}
-\begin{itemize}
-    \item[3a] 分页浏览：切换页码加载数据
-    \item[3b] 按用户名搜索：过滤对应用户会话
-    \item[6a] 加载失败：提供重试按钮
-\end{itemize}
-
-\subsection{字段列表}
-\begin{tabular}{|c|c|c|l|}
-    \hline
-    字段名 & 类型 & 必填 & 说明 \\
-    \hline
-    会话ID & 文本 & 是 & 唯一标识 \\
-    用户名 & 文本 & 是 & 咨询用户 \\
-    开始时间 & 时间戳 & 是 & 会话开始 \\
-    消息数量 & 数字 & 是 & 总条数 \\
-    会话状态 & 枚举 & 是 & 进行中/已结束 \\
-    \hline
-\end{tabular}
-
-\subsection{业务规则}
-\begin{itemize}[leftmargin=*]
-    \item 按时间倒序排列
-    \item 内容只读，不可编辑
-    \item 高风险会话自动标记
-\end{itemize}
-
-\subsection{非功能需求}
-\begin{itemize}[leftmargin=*]
-    \item 列表加载 < 2秒
-    \item 弹窗加载 < 1秒
-\end{itemize}
-
-\vspace{5pt}
-\hrulefill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      UC8 查看情绪记录
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UC8：查看情绪记录}
-\paragraph{主执行者：} 管理员
-\paragraph{前置条件：} 管理员已登录系统
-\paragraph{后置条件：} 管理员已查看情绪详情
-
-\subsection{涉众利益}
-\begin{itemize}[leftmargin=*]
-    \item 管理员：掌握用户情绪状态，及时干预
-    \item 平台：保障用户心理健康安全
-\end{itemize}
-
-\subsection{基本路径}
-\begin{enumerate}
-    \item 管理员进入情绪记录管理页
-    \item 系统显示情绪记录列表
-    \item 管理员浏览记录
-    \item 点击查看详情
-    \item 系统加载数据
-    \item 展示详情弹窗
-    \item 查看情绪信息与风险等级
-    \item 关闭返回列表
-\end{enumerate}
-
-\subsection{扩展}
-\begin{itemize}
-    \item[3a] 按风险等级筛选：显示低/中/高风险记录
-    \item[3b] 按日期范围筛选：显示指定时间段记录
-    \item[7a] 高风险记录：红色警示突出显示
-\end{itemize}
-
-\subsection{字段列表}
-\begin{tabular}{|c|c|c|l|}
-    \hline
-    字段名 & 类型 & 必填 & 说明 \\
-    \hline
-    记录ID & 文本 & 是 & 唯一标识 \\
-    用户名 & 文本 & 是 & 所属用户 \\
-    情绪评分 & 数字 & 是 & 1–10分 \\
-    主要情绪 & 数组 & 是 & 选中标签 \\
-    风险等级 & 枚举 & 是 & 低/中/高 \\
-    记录时间 & 时间戳 & 是 & 提交时间 \\
-    \hline
-\end{tabular}
-
-\subsection{业务规则}
-\begin{itemize}[leftmargin=*]
-    \item 1–3高风险、4–6中风险、7–10低风险
-    \item 高风险记录优先显示
-    \item 仅查看，不可编辑
-\end{itemize}
-
-\subsection{非功能需求}
-\begin{itemize}[leftmargin=*]
-    \item 列表加载 < 2秒
-    \item 风险等级用颜色区分展示
-\end{itemize}
-
-\vspace{5pt}
-\hrulefill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                    附录：用例图 + 权限
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{附录 A：标准 UML 用例图}
-
-\begin{figure}[htbp]
+\begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{plantuml.png}
-    \caption{用例图}
+    \includegraphics[width=0.8\textwidth]{plantuml.png}
+    \caption{AI心理健康助手平台用例图}
 \end{figure}
 
+\subsection{假设与依赖}
+\begin{enumerate}
+    \item 系统权限分级管控，访客仅开放公开浏览权限，注册用户解锁全部核心业务功能。
+    \item 用户隐私数据、聊天记录、情绪档案均采用加密存储，保障个人信息安全合规。
+    \item 智能对话功能依赖第三方 AI 接口服务，接口可用性直接影响咨询模块运行状态。
+    \item 本次迭代暂不接入第三方登录、在线支付、消息推送等扩展业务。
+\end{enumerate}
 
-\section{附录 B：权限矩阵}
-\begin{tabular}{|c|c|c|c|}
-    \hline
-    功能 & 访客 & 注册用户 & 管理员 \\
-    \hline
-    浏览首页 & ✓ & ✓ & ✓ \\
-    用户注册 & ✓ & — & — \\
-    用户登录 & ✓ & ✓ & ✓ \\
-    AI咨询 & — & ✓ & ✓ \\
-    情绪日记 & — & ✓ & ✓ \\
-    浏览知识库 & ✓ & ✓ & ✓ \\
-    管理文章 & — & — & ✓ \\
-    查看咨询记录 & — & — & ✓ \\
-    查看情绪记录 & — & — & ✓ \\
-    \hline
-\end{tabular}
+\section{具体需求}
+\subsection{用例报告}
 
-\section{附录 C：优先级说明}
-\begin{tabular}{|c|c|c|c|}
-    \hline
-    优先级 & 说明 & 包含用例 \\
-    \hline
-    高 & 核心功能 & UC1、UC2、UC3、UC4 \\
-    中 & 重要功能 & UC5、UC6、UC7、UC8 \\
-    \hline
-\end{tabular}
+\subsubsection{公共用例}
 
+\par
+\indent 用例名：用户登录
+\par
+\indent 参与者：注册用户、管理员
+\par
+\indent 前置条件：系统已完成部署，数据库存在合法账号数据
+\par
+\indent 后置条件：校验通过后记录用户登录会话，授予对应角色操作权限
+\par
+\indent 主要流程：
+\begin{enumerate}
+    \item 用户进入系统登录界面；
+    \item 填写账号、密码并提交登录请求；
+    \item 系统校验账号密码合法性；
+    \item 校验通过，按用户角色跳转至对应功能主页。
+\end{enumerate}
+\par
+\indent 变化流程：
+\begin{itemize}
+    \item 2a 表单信息填写不完整：系统高亮提示必填项，停留登录页面；
+    \item 3a 账号或密码不匹配：统一返回权限错误提示，防止暴力破解；
+    \item 3b 账户被禁用：系统提示账户已被禁用，请联系管理员，用例终止。
+\end{itemize}
+
+\par
+\indent 用例名：浏览知识库
+\par
+\indent 参与者：访客、注册用户
+\par
+\indent 前置条件：用户成功访问平台知识库模块
+\par
+\indent 后置条件：用户获取心理健康知识
+\par
+\indent 主要流程：
+\begin{enumerate}
+    \item 系统展示文章分类目录与图文列表；
+    \item 支持分类筛选、关键词检索快速定位内容；
+    \item 点击文章条目查看完整科普内容；
+    \item 累计统计内容阅读量。
+\end{enumerate}
+\par
+\indent 变化流程：
+\begin{itemize}
+    \item 2a 按分类筛选：显示对应分类文章；
+    \item 2b 关键词搜索：显示匹配结果；
+    \item 4a 切换分页：加载对应页内容。
+\end{itemize}
+
+\subsubsection{访客用例}
+
+\par
+\indent 用例名：用户注册
+\par
+\indent 参与者：访客
+\par
+\indent 前置条件：访客成功访问系统注册页面
+\par
+\indent 后置条件：系统生成独立用户账号，写入基础用户数据表
+\par
+\indent 主要流程：
+\begin{enumerate}
+    \item 访客进入注册界面；
+    \item 按规范填写用户名、邮箱、密码、确认密码等必填字段；
+    \item 系统校验字段格式、长度规则与数据唯一性；
+    \item 校验无误后加密保存用户信息，提示注册成功并跳转登录页。
+\end{enumerate}
+\par
+\indent 变化流程：
+\begin{itemize}
+    \item 2a 字段格式非法、长度超限：实时格式校验并给出修改指引；
+    \item 2b 用户名或邮箱已被占用：提示冲突信息，引导更换内容；
+    \item 4a 信息填写不完整：系统提示“请填写所有必填项”，返回步骤2。
+\end{itemize}
+
+\subsubsection{注册用户用例}
+
+\par
+\indent 用例名：AI咨询聊天
+\par
+\indent 参与者：注册用户
+\par
+\indent 前置条件：用户已完成登录，会话状态正常
+\par
+\indent 后置条件：单次对话内容自动归档至个人咨询记录
+\par
+\indent 主要流程：
+\begin{enumerate}
+    \item 登录用户进入 AI 智能咨询模块；
+    \item 加载历史会话记录与聊天交互界面；
+    \item 用户编辑并提交咨询内容；
+    \item 系统调用 AI 服务接口获取应答数据；
+    \item 渲染 AI 回复内容，同步保存完整会话。
+\end{enumerate}
+\par
+\indent 变化流程：
+\begin{itemize}
+    \item 3a 使用快捷提示：系统自动填入并发送，继续步骤4；
+    \item 4a 上游 AI 接口响应超时：提示服务繁忙，支持重试操作；
+    \item 4b 识别到极端负面、自残、抑郁等高风险内容：自动标记预警并展示心理援助渠道。
+\end{itemize}
+
+\par
+\indent 用例名：记录情绪日记
+\par
+\indent 参与者：注册用户
+\par
+\indent 前置条件：用户已正常登录系统
+\par
+\indent 后置条件：情绪表单数据持久化存储，纳入个人健康档案
+\par
+\indent 主要流程：
+\begin{enumerate}
+    \item 用户进入情绪日记填写页面；
+    \item 选择当日情绪评分、情绪标签；
+    \item 补充生活事件、内心想法、睡眠质量、压力等级等描述信息；
+    \item 提交表单，系统完成数据校验与入库；
+    \item 页面反馈保存成功提示。
+\end{enumerate}
+\par
+\indent 变化流程：
+\begin{itemize}
+    \item 2a 未选择核心必填项：拦截提交操作，标注缺失字段；
+    \item 3a 用户清空表单：重置所有内容，返回步骤2。
+\end{itemize}
+
+\subsubsection{管理员用例}
+
+\par
+\indent 用例名：管理文章
+\par
+\indent 参与者：管理员
+\par
+\indent 前置条件：管理员完成后台登录，拥有内容管理权限
+\par
+\indent 后置条件：文章内容完成新增、修改或下架删除，数据实时生效
+\par
+\indent 主要流程：
+\begin{enumerate}
+    \item 管理员进入后台内容管理模块；
+    \item 系统展示全部知识库文章列表；
+    \item 执行新增发布、编辑内容、修改状态或删除操作；
+    \item 后台校验数据合规性，更新数据库并刷新列表。
+\end{enumerate}
+\par
+\indent 变化流程：
+\begin{itemize}
+    \item 3a 关键内容缺失或格式违规：禁止提交并给出修改提示；
+    \item 3b 删除文章：二次确认后删除并刷新列表。
+\end{itemize}
+
+\par
+\indent 用例名：查看咨询记录
+\par
+\indent 参与者：管理员
+\par
+\indent 前置条件：管理员已登录后台系统
+\par
+\indent 后置条件：可完整查阅指定用户历史咨询会话
+\par
+\indent 主要流程：
+\begin{enumerate}
+    \item 管理员进入咨询记录管理页面；
+    \item 系统按时间倒序展示全部会话摘要；
+    \item 支持按用户ID、时间区间多条件筛选；
+    \item 点开详情查看完整对话上下文。
+\end{enumerate}
+\par
+\indent 变化流程：
+\begin{itemize}
+    \item 3a 关键词检索指定用户，精准定位目标记录；
+    \item 3b 分页浏览：切换页码加载数据。
+\end{itemize}
+
+\par
+\indent 用例名：查看情绪记录
+\par
+\indent 参与者：管理员
+\par
+\indent 前置条件：管理员已登录后台系统
+\par
+\indent 后置条件：获取用户长期情绪变化数据与风险标签
+\par
+\indent 主要流程：
+\begin{enumerate}
+    \item 管理员进入情绪数据统计页面；
+    \item 系统批量展示用户情绪日记列表；
+    \item 按风险等级、提交时间、用户维度筛选数据；
+    \item 高危情绪记录特殊高亮标记，便于重点关注。
+\end{enumerate}
+\par
+\indent 变化流程：
+\begin{itemize}
+    \item 3a 按风险等级筛选：显示低/中/高风险记录；
+    \item 3b 按日期范围筛选：显示指定时间段记录；
+    \item 4a 高风险记录：红色警示突出显示。
+\end{itemize}
+
+\section{补充需求}
+\subsection{功能性需求补充}
+\begin{itemize}
+    \item 知识库文章分类统一后台配置，支持动态新增、编辑分类，无需修改代码重启服务。
+    \item 严格数据权限隔离，普通用户仅可见个人数据，管理员仅在授权范围内查看公共运营数据，杜绝越权访问。
+    \item 系统内置敏感词与风险内容识别机制，对暴力、消极、自残、极端言论自动拦截、标记与预警。
+    \item 会话记录、情绪日记支持长期归档存储，保留历史数据，便于后期统计分析与系统优化。
+    \item 前端路由权限拦截，未登录用户访问受限页面自动强制跳转登录界面。
+\end{itemize}
+
+\subsection{可用性需求}
+界面布局简洁统一，操作逻辑清晰，功能命名通俗易懂；
+关键操作配有文字提示、表单校验与错误指引，降低使用门槛；
+整体交互风格统一，适配主流浏览器访问，保证不同终端基础使用体验一致。
+
+\subsection{可靠性需求}
+系统服务持续稳定运行，全年可用率不低于 99\%；
+核心业务数据采用持久化存储，关键操作加入事务控制，避免数据丢失、重复写入或异常错乱；
+异常场景具备容错处理，接口异常、网络波动时友好提示，避免页面崩溃。
+
+\subsection{性能需求}
+普通页面常规加载响应时间控制在 2 秒以内；
+AI 咨询接口应答响应时间不超过 3 秒；
+系统支持至少 100 名用户同时在线正常访问，高峰期服务无明显卡顿；
+列表数据采用分页懒加载机制，减少一次性数据渲染压力。
+
+\subsection{安全性需求}
+用户登录密码加密存储，传输过程采用安全协议加固；
+前后端双重表单校验，防范非法参数、恶意提交与注入攻击；
+后台管理员操作留痕，关键管理行为记录操作日志，便于溯源审计；
+用户隐私数据脱敏展示，禁止明文泄露敏感个人信息。
+
+\subsection{可维护性需求}
+前后端业务模块解耦，代码结构分层清晰，便于后期迭代开发；
+系统关键配置集中管理，参数可动态调整，降低运维成本；
+统一异常捕获与日志输出，问题可快速定位、排查与修复；
+文档与代码同步更新，保障项目交接与长期维护。
+
+\subsection{兼容性需求}
+适配 Chrome、Edge、360 等主流现代浏览器；
+页面采用自适应布局，兼容电脑端常规分辨率展示；
+接口格式标准化，便于后续对接小程序、移动端 H5 等多端扩展。
+
+\subsection{设计与约束需求}
+\begin{itemize}
+    \item 整体视觉风格贴合心理健康产品定位，色调温和简约，弱化强刺激元素。
+    \item 业务流程遵循最简操作原则，减少冗余步骤，提升用户使用体验。
+    \item 严格遵循本次项目开发范围，不额外扩展非约定业务功能。
+    \item 所有功能设计符合网络内容规范与青少年心理健康引导要求。
+\end{itemize}
