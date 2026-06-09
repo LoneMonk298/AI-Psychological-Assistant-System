@@ -1,25 +1,6 @@
 <template>
   <div class="home-page">
-    <el-container class="home-layout">
-      <el-header class="home-header">
-        <div class="nav-shell">
-          <button class="brand" type="button" @click="go('/')">
-            <img src="@/assets/logo.svg" alt="心理健康AI助手" class="brand-logo" />
-            <span>心理健康AI助手</span>
-          </button>
-
-          <nav class="nav-links" aria-label="主页导航">
-            <el-button class="nav-btn active" text :icon="House" @click="go('/')">主页</el-button>
-            <el-button class="nav-btn" text :icon="Reading" @click="go('/customer/knowledge')">
-              知识库
-            </el-button>
-            <el-button class="login-btn" :icon="User" @click="go('/auth/login')">登录</el-button>
-          </nav>
-        </div>
-      </el-header>
-
-      <el-main class="home-main">
-        <section class="hero">
+    <section class="hero">
           <div class="hero-container">
             <div class="hero-content">
               <h1>
@@ -27,14 +8,23 @@
                 <span>让情绪被看见</span>
               </h1>
               <p>
-                围绕心理知识、情绪日志、咨询记录和后续 MaxKB 接入，构建一个更易使用、
-                更便于管理的心理健康辅助系统。
+                围绕心理知识、情绪日志、咨询记录和后续 MaxKB
+                接入，构建一个更易使用、 更便于管理的心理健康辅助系统。
               </p>
               <div class="hero-actions">
-                <el-button type="primary" size="large" :icon="ChatDotRound" @click="go('/auth/login')">
+                <el-button
+                  type="primary"
+                  size="large"
+                  :icon="ChatDotRound"
+                  @click="go('/auth/login')"
+                >
                   开始使用
                 </el-button>
-                <el-button size="large" :icon="Reading" @click="go('/customer/knowledge')">
+                <el-button
+                  size="large"
+                  :icon="Reading"
+                  @click="go('/customer/knowledge')"
+                >
                   查看知识库
                 </el-button>
               </div>
@@ -43,7 +33,11 @@
             <div class="hero-visual" aria-label="心理健康AI助手品牌标识">
               <div class="logo-showcase">
                 <div class="logo-halo"></div>
-                <img src="@/assets/logo.png" alt="心理健康AI助手品牌 Logo" class="hero-logo" />
+                <img
+                  src="@/assets/logo.png"
+                  alt="心理健康AI助手品牌 Logo"
+                  class="hero-logo"
+                />
                 <div class="brand-caption">
                   <strong>AI Psychological Assistant</strong>
                   <span>温柔记录，理性支持</span>
@@ -68,8 +62,18 @@
           </div>
 
           <el-row :gutter="22">
-            <el-col v-for="item in features" :key="item.title" :xs="24" :sm="12" :lg="6">
-              <el-card class="feature-card" shadow="hover" @click="go(item.path)">
+            <el-col
+              v-for="item in features"
+              :key="item.title"
+              :xs="24"
+              :sm="12"
+              :lg="6"
+            >
+              <el-card
+                class="feature-card"
+                shadow="hover"
+                @click="go(item.path)"
+              >
                 <div class="feature-icon">
                   <el-icon><component :is="item.icon" /></el-icon>
                 </div>
@@ -90,41 +94,11 @@
         <section class="cta">
           <div>
             <h2>开始你的心理健康管理之旅</h2>
-            <p>先完成可靠的内容与记录闭环，后续再通过 MaxKB 扩展智能问答能力。</p>
+            <p>
+              先完成可靠的内容与记录闭环，后续再通过 MaxKB 扩展智能问答能力。
+            </p>
           </div>
-          <el-button type="primary" size="large" :icon="User" @click="go('/auth/login')">
-            进入系统
-          </el-button>
         </section>
-      </el-main>
-
-      <el-footer class="home-footer">
-        <div class="footer-shell">
-          <div class="footer-brand">
-            <span>心理健康AI助手</span>
-            <p>让每一次情绪表达都被认真对待。</p>
-          </div>
-
-          <div class="footer-links">
-            <div>
-              <h4>产品</h4>
-              <button type="button" @click="go('/customer/knowledge')">知识库</button>
-              <button type="button" @click="go('/user/emotion')">情绪日志</button>
-              <button type="button" @click="go('/user/consultations')">咨询记录</button>
-            </div>
-            <div>
-              <h4>关于</h4>
-              <button type="button" @click="privacyVisible = true">隐私政策</button>
-              <button type="button" @click="go('/auth/login')">登录系统</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <span>© 2026 AI Psychological Assistant System. All rights reserved.</span>
-        </div>
-      </el-footer>
-    </el-container>
 
     <el-dialog
       v-model="privacyVisible"
@@ -139,7 +113,8 @@
           情绪日志管理、咨询记录查看和后台分析时使用必要数据。
         </p>
         <p>
-          部署到真实服务器前，应启用 HTTPS、完善 Token 鉴权、密码加密、权限控制和操作日志，
+          部署到真实服务器前，应启用 HTTPS、完善 Token
+          鉴权、密码加密、权限控制和操作日志，
           避免在页面中展示不必要的敏感信息。
         </p>
         <p>
@@ -147,65 +122,65 @@
         </p>
       </div>
       <template #footer>
-        <el-button type="primary" @click="privacyVisible = false">我已了解</el-button>
+        <el-button type="primary" @click="privacyVisible = false"
+          >我已了解</el-button
+        >
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import {
   ChatDotRound,
   DataAnalysis,
-  House,
   Lock,
   Notebook,
   Reading,
-  User,
-} from '@element-plus/icons-vue'
+} from "@element-plus/icons-vue";
 
-const router = useRouter()
-const privacyVisible = ref(false)
+const router = useRouter();
+const privacyVisible = ref(false);
 
 const go = (path) => {
-  router.push(path)
-}
+  router.push(path);
+};
 
 const features = [
   {
-    title: 'AI 智能对话',
-    desc: '预留 MaxKB 接入能力，后续可扩展为心理问答与陪伴式对话。',
-    path: '/auth/login',
+    title: "AI 智能对话",
+    desc: "预留 MaxKB 接入能力，后续可扩展为心理问答与陪伴式对话。",
+    path: "/auth/login",
     icon: ChatDotRound,
   },
   {
-    title: '情绪日志',
-    desc: '记录每日情绪评分、睡眠质量、压力水平和触发因素。',
-    path: '/user/emotion',
+    title: "情绪日志",
+    desc: "记录每日情绪评分、睡眠质量、压力水平和触发因素。",
+    path: "/user/emotion",
     icon: Notebook,
   },
   {
-    title: '知识库',
-    desc: '维护心理健康科普文章，支持分类、标签和发布状态管理。',
-    path: '/customer/knowledge',
+    title: "知识库",
+    desc: "维护心理健康科普文章，支持分类、标签和发布状态管理。",
+    path: "/customer/knowledge",
     icon: Reading,
   },
   {
-    title: '数据分析',
-    desc: '汇总知识、咨询和情绪数据，帮助管理端了解系统使用情况。',
-    path: '/user/dashboard',
+    title: "数据分析",
+    desc: "汇总知识、咨询和情绪数据，帮助管理端了解系统使用情况。",
+    path: "/user/dashboard",
     icon: DataAnalysis,
   },
-]
+];
 
 const stats = [
-  { value: '4+', label: '核心功能模块' },
-  { value: '24h', label: '随时记录与查看' },
-  { value: '100%', label: '自主管理数据' },
-  { value: 'MaxKB', label: '后续智能接入' },
-]
+  { value: "4+", label: "核心功能模块" },
+  { value: "24h", label: "随时记录与查看" },
+  { value: "100%", label: "自主管理数据" },
+  { value: "MaxKB", label: "后续智能接入" },
+];
 </script>
 
 <style scoped>
@@ -221,7 +196,12 @@ const stats = [
   --footer-bg: #26213e;
 
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--brand-bg) 0%, #f7f2ff 52%, #ffffff 100%);
+  background: linear-gradient(
+    180deg,
+    var(--brand-bg) 0%,
+    #f7f2ff 52%,
+    #ffffff 100%
+  );
   color: var(--text-main);
 }
 
@@ -283,9 +263,13 @@ const stats = [
   color: var(--brand-primary);
 }
 
-.login-btn {
+.logout-btn {
   border: 0;
-  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--brand-primary) 0%,
+    var(--brand-accent) 100%
+  );
   color: #fff;
   font-weight: 700;
 }
@@ -341,7 +325,11 @@ const stats = [
 .cta .el-button--primary,
 .privacy-dialog :deep(.el-button--primary) {
   border: 0;
-  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--brand-primary) 0%,
+    var(--brand-accent) 100%
+  );
 }
 
 .hero-visual {
@@ -354,8 +342,16 @@ const stats = [
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   background:
-    radial-gradient(circle at 28% 24%, rgba(238, 159, 201, 0.25), transparent 30%),
-    radial-gradient(circle at 76% 72%, rgba(138, 104, 214, 0.22), transparent 34%),
+    radial-gradient(
+      circle at 28% 24%,
+      rgba(238, 159, 201, 0.25),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 76% 72%,
+      rgba(138, 104, 214, 0.22),
+      transparent 34%
+    ),
     linear-gradient(145deg, #ffffff 0%, #fbf4ff 100%);
   box-shadow: 0 28px 70px rgba(92, 74, 125, 0.18);
 }
@@ -374,7 +370,11 @@ const stats = [
   width: 230px;
   height: 230px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(138, 104, 214, 0.18), rgba(238, 159, 201, 0.24));
+  background: linear-gradient(
+    135deg,
+    rgba(138, 104, 214, 0.18),
+    rgba(238, 159, 201, 0.24)
+  );
   filter: blur(4px);
 }
 
@@ -465,7 +465,9 @@ const stats = [
   border: 0;
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .feature-card:hover {
@@ -585,31 +587,7 @@ const stats = [
   color: #c8c0e6;
 }
 
-.footer-links {
-  display: flex;
-  gap: 70px;
-}
 
-.footer-links h4 {
-  margin-bottom: 12px;
-  color: #fff;
-  font-size: 15px;
-}
-
-.footer-links button {
-  display: block;
-  margin: 8px 0;
-  border: 0;
-  background: transparent;
-  color: #c8c0e6;
-  cursor: pointer;
-  font: inherit;
-  text-align: left;
-}
-
-.footer-links button:hover {
-  color: #fff;
-}
 
 .footer-bottom {
   max-width: 1160px;
@@ -686,12 +664,6 @@ const stats = [
     padding: 30px 24px;
   }
 
-  .footer-links {
-    flex-direction: column;
-    gap: 24px;
-  }
-}
-
 @media (max-width: 520px) {
   .brand span {
     font-size: 16px;
@@ -709,6 +681,7 @@ const stats = [
 
   .stats {
     grid-template-columns: 1fr;
+  }
   }
 }
 </style>
