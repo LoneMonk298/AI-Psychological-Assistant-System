@@ -16,10 +16,10 @@
         >主页</el-button>
         <el-button
           class="nav-btn"
-          :class="{ active: route.path === '/user/knowledge' }"
+          :class="{ active: route.path === '/customer/knowledge' }"
           text
           :icon="Reading"
-          @click="go('/user/knowledge')"
+          @click="go('/customer/knowledge')"
         >知识库</el-button>
         <el-button
           class="nav-btn"

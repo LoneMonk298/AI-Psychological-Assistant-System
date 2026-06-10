@@ -10,7 +10,7 @@
 
           <nav class="nav-links" aria-label="主页导航">
             <el-button class="nav-btn active" text :icon="House" @click="go('/')">主页</el-button>
-            <el-button class="nav-btn" text :icon="Reading" @click="go('/user/knowledge')">
+            <el-button class="nav-btn" text :icon="Reading" @click="go('/customer/knowledge')">
               知识库
             </el-button>
             <el-button class="login-btn" :icon="User" @click="go('/auth/login')">登录</el-button>
@@ -34,7 +34,7 @@
                 <el-button type="primary" size="large" :icon="ChatDotRound" @click="go('/auth/login')">
                   开始使用
                 </el-button>
-                <el-button size="large" :icon="Reading" @click="go('/user/knowledge')">
+                <el-button size="large" :icon="Reading" @click="go('/customer/knowledge')">
                   查看知识库
                 </el-button>
               </div>
@@ -108,7 +108,7 @@
           <div class="footer-links">
             <div>
               <h4>产品</h4>
-              <button type="button" @click="go('/user/knowledge')">知识库</button>
+              <button type="button" @click="go('/customer/knowledge')">知识库</button>
               <button type="button" @click="go('/user/emotion')">情绪日志</button>
               <button type="button" @click="go('/user/consultations')">咨询记录</button>
             </div>
@@ -189,7 +189,7 @@ const features = [
   {
     title: '知识库',
     desc: '维护心理健康科普文章，支持分类、标签和发布状态管理。',
-    path: '/user/knowledge',
+    path: '/customer/knowledge',
     icon: Reading,
   },
   {

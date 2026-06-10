@@ -23,7 +23,7 @@
                 <el-button
                   size="large"
                   :icon="Reading"
-                  @click="go('/user/knowledge')"
+                  @click="go('/customer/knowledge')"
                 >
                   查看知识库
                 </el-button>
@@ -164,7 +164,7 @@ const features = [
   {
     title: "知识库",
     desc: "维护心理健康科普文章，支持分类、标签和发布状态管理。",
-    path: "/user/knowledge",
+    path: "/customer/knowledge",
     icon: Reading,
   },
   {

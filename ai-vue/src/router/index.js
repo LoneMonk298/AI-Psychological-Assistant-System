@@ -63,6 +63,7 @@ const BackEndLayoutRoutes = [
   },
 ];
 
+]
 const UserLayoutRoutes = [
   {
     path: "/customer",
@@ -85,9 +86,11 @@ const UserLayoutRoutes = [
           keepAlive: true,
         },
       },
+
     ],
   },
 ];
+
 
 // 路由实例
 const router = createRouter({
