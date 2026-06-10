@@ -66,3 +66,7 @@ export function deleteEmotional(id) {
 export function logout() {
     return service.post('/user/logout')
 }
+
+export function getAnalyticsOverview() {
+    return service.get(`/data-analytics/overview`)
+}
