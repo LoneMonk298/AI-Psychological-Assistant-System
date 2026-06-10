@@ -63,7 +63,6 @@ const BackEndLayoutRoutes = [
   },
 ];
 
-]
 const UserLayoutRoutes = [
   {
     path: "/customer",
@@ -86,11 +85,17 @@ const UserLayoutRoutes = [
           keepAlive: true,
         },
       },
-
+      {
+        path: "knowledge",
+        component: () => import("@/views/frontendKnowledge.vue"),
+        meta: {
+          title: "知识库",
+          keepAlive: true,
+        },
+      },
     ],
   },
 ];
-
 
 // 路由实例
 const router = createRouter({
