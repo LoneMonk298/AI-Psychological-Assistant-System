@@ -61,7 +61,51 @@ const BackEndLayoutRoutes = [
         component:()=>import('@/views/index.vue'),
     }
 
+<<<<<<< Updated upstream
 ]
+=======
+const UserLayoutRoutes = [
+  {
+    path: "/customer",
+    redirect: "/customer/home",
+    component: UserLayout,
+    children: [
+      {
+        path: "home",
+        component: () => import("@/views/home.vue"),
+        meta: {
+          title: "用户首页",
+        },
+      },
+      {
+        path: "chat",
+        name: "CustomerChat",
+        component: () => import("@/views/chat.vue"),
+        meta: {
+          title: "AI咨询",
+          keepAlive: true,
+        },
+      },
+      {
+        path: "knowledge",
+        component: () => import("@/views/frontendKnowledge.vue"),
+        meta: {
+          title: "知识库",
+          keepAlive: true,
+        },
+      },
+      {
+        path: "emotionDiary",
+        component: () => import("@/views/emotionDiary.vue"),
+        meta: {
+          title: "情绪日志",
+          keepAlive: true,
+        },
+      }
+    ],
+  },
+];
+>>>>>>> Stashed changes
 
 // 路由实例
 const router = createRouter({
