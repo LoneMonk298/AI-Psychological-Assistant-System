@@ -62,7 +62,6 @@ const BackEndLayoutRoutes = [
     component: () => import("@/views/index.vue"),
   },
 ];
-
 const UserLayoutRoutes = [
   {
     path: "/customer",
@@ -97,6 +96,14 @@ const UserLayoutRoutes = [
         path: 'knowledge/article/:id',
         component: () => import("@/views/articleDetail.vue"),
         props:true
+      },
+      {
+        path: "emotionDiary",
+        component: () => import("@/views/emotionDiary.vue"),
+        meta: {
+          title: "情绪日志",
+          keepAlive: true,
+        },
       }
     ],
   },
