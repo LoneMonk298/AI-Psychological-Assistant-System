@@ -257,7 +257,7 @@ const handleLogin = async () => {
                 if (userInfo && (userInfo.userType === 2 || userInfo.roleType === 2 || userInfo.roleType === '2')) {
                     router.push('/user/dashboard')
                 } else {
-                    router.push('/')
+                    router.push('/customer/home')
                 }
             } else {
                 alert('登录失败：未获取到 token')

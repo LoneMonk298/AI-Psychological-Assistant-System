@@ -1,7 +1,3 @@
-<<<<<<< Updated upstream
-export const addEmotionDiary = (data) => {
-    return Service.post("/emotion-diary", data);
-=======
 import service from "@/utils/request";
 
 export const addEmotionDiary = (data) => {
@@ -10,5 +6,4 @@ export const addEmotionDiary = (data) => {
 
 export function getKnowledgeList(params) {
     return service.get('/knowledge/article/page', {params})
->>>>>>> Stashed changes
 }
