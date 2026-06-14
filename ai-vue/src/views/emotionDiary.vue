@@ -6,8 +6,7 @@
         <h1>情绪日志</h1>
       </div>
     </div>
-  </div>
-  <div class="content">
+    <div class="content">
     <!-- 情绪评分 -->
     <div class="diary-card">
       <div class="title">今日情绪评分</div>
@@ -78,9 +77,11 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 <script setup>
-import { dayjs, ElMessage } from "element-plus";
+import dayjs from "dayjs";
+import { ElMessage } from "element-plus";
 import { ref, reactive } from "vue";
 import { addEmotionDiary } from "@/api/frontend";
 

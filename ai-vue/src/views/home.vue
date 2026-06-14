@@ -158,7 +158,7 @@ const features = [
   {
     title: "情绪日志",
     desc: "记录每日情绪评分、睡眠质量、压力水平和触发因素。",
-    path: "/user/emotion",
+    path: "/customer/emotionDiary",
     icon: Notebook,
   },
   {

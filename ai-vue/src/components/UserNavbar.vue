@@ -28,6 +28,12 @@
           :icon="AIchat"
           @click="go('/customer/chat')"
         >AI咨询</el-button>
+        <el-button
+          class="nav-btn"
+          :class="{ active: route.path === '/customer/emotionDiary' }"
+          text
+          @click="go('/customer/emotionDiary')"
+        >情绪日志</el-button>
       </nav>
     </div>
 
