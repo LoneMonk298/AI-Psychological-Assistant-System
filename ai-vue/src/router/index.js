@@ -62,7 +62,6 @@ const BackEndLayoutRoutes = [
     component: () => import("@/views/index.vue"),
   },
 ];
-]
 const UserLayoutRoutes = [
   {
     path: "/customer",
@@ -101,9 +100,6 @@ const UserLayoutRoutes = [
           keepAlive: true,
         },
       }
-    ],
-  },
-];
     ],
   },
 ];
