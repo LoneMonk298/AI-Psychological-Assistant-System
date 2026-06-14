@@ -11,7 +11,7 @@
             <div class="recommend-section">
                 <div class="section-title">推荐阅读</div>
                 <div class="recommend-list">
-                    <div v-for="item in recommendList" :key="item.id" class="recommend-item">
+                    <div v-for="item in recommendList" :key="item.id" class="recommend-item" @click="goToArticle(item.id)">
                         <h4>{{ item.title }}</h4>
                         <p class="read-count">
                             <el-icon>
@@ -24,7 +24,7 @@
             </div>
             <!-- 右侧文章列表 -->
             <div class="article-list">
-                <div v-for="item in articleList" :key="item.id" class="article-item">
+                <div v-for="item in articleList" :key="item.id" class="article-item" @click="goToArticle(item.id)">
                     <el-image :src="getImage(item.coverImage)" style="width: 200px; height: 100px;"></el-image>
                     <div class="info">
                         <div class="title">
@@ -72,6 +72,9 @@ import { Histogram, Avatar, List, Platform } from '@element-plus/icons-vue'
 import { getKnowledgeList } from '@/api/frontend'
 import bookImage from '@/assets/images/book.png'
 import defaultArticleImage from '@/assets/images/default.png'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const iconUrl = bookImage
 
@@ -111,6 +114,12 @@ const handleChange = (page) => {
     gatPageList()
 }
 
+//跳转到详情页面
+const goToArticle = (id) =>{
+    console.log('点击文章，ID:', id)
+    console.log('跳转路径:', `/customer/knowledge/article/${id}`)
+    router.push(`/customer/knowledge/article/${id}`)
+}
 onMounted(() => {
     // 获取推荐阅读列表
     const params = {

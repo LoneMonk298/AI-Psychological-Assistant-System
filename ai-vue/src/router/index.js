@@ -93,6 +93,11 @@ const UserLayoutRoutes = [
         },
       },
       {
+        path: 'knowledge/article/:id',
+        component: () => import("@/views/articleDetail.vue"),
+        props:true
+      },
+      {
         path: "emotionDiary",
         component: () => import("@/views/emotionDiary.vue"),
         meta: {
@@ -113,30 +118,45 @@ const router = createRouter({
 // 路由前置守卫
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");
-  // 当前是否登录
   if (token) {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    if (userInfo.roleType == 2) {
-      if (to.path.startsWith("/user")) {
-        next();
+    try {
+      const userInfo = JSON.parse(localStorage.getItem("userInfo") || '{}');
+      const roleType = parseInt(userInfo.roleType);
+      if (!isNaN(roleType)) {
+        if (roleType === 2) {
+          // 管理员可以访问后台页面和前台知识库相关页面
+          if (to.path.startsWith("/user") || to.path.startsWith("/customer/knowledge")) {
+            next();
+          } else if (to.path.startsWith("/customer")) {
+            // 管理员访问其他前台页面时，重定向到后台
+            next("/user/dashboard");
+          } else {
+            next("/user/dashboard");
+          }
+        } else if (roleType === 1) {
+          // 普通用户可以访问前台页面
+          if (to.path.startsWith("/user")) {
+            next("/customer/home");
+          } else {
+            next();
+          }
+        } else {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userInfo");
+          next("/auth/login");
+        }
       } else {
-        next("/user/dashboard");
-      }
-    } else if (userInfo.roleType == 1) {
-      if (to.path.startsWith("/user")) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userInfo");
         next("/auth/login");
-      } else {
-        next();
       }
-    } else {
-      // roleType 不明确时，清除 token 防止死循环
+    } catch (e) {
       localStorage.removeItem("token");
       localStorage.removeItem("userInfo");
       next("/auth/login");
     }
   } else {
     if (to.path.startsWith("/user") || to.path == "/home") {
-      // 如果访问后台页面，且没有token，重定向到登录页
       next("/auth/login");
     } else {
       next();

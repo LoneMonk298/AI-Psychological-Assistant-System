@@ -7,3 +7,7 @@ export const addEmotionDiary = (data) => {
 export function getKnowledgeList(params) {
     return service.get('/knowledge/article/page', {params})
 }
+
+export function getKnowledgeDetail(articleId) {
+    return service.get(`/knowledge/article/${articleId}`)
+}
