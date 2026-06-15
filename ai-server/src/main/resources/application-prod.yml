@@ -21,3 +21,5 @@ app:
   file:
     upload-dir: ${UPLOAD_DIR:/www/wwwroot/ai-psychological-assistant/uploads}
     public-prefix: /uploads
+  mail:
+    from: ${MAIL_FROM:}

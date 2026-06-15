@@ -1,138 +1,162 @@
 <template>
-  <div class="home-page">
-    <el-container class="home-layout">
-      <el-header class="home-header">
+  <div class="landing-page">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+
+    <el-container>
+      <el-header class="landing-header">
         <div class="nav-shell">
           <button class="brand" type="button" @click="go('/')">
-            <img src="@/assets/logo.svg" alt="心理健康AI助手" class="brand-logo" />
+            <img src="@/assets/logo.svg" alt="心理健康AI助手" />
             <span>心理健康AI助手</span>
           </button>
 
           <nav class="nav-links" aria-label="主页导航">
-            <el-button class="nav-btn active" text :icon="House" @click="go('/')">主页</el-button>
-            <el-button class="nav-btn" text :icon="Reading" @click="go('/customer/knowledge')">
+            <el-button text class="nav-button active" :icon="House" @click="go('/')">主页</el-button>
+            <el-button text class="nav-button" :icon="Reading" @click="go('/knowledge')">
               知识库
             </el-button>
-            <el-button class="login-btn" :icon="User" @click="go('/auth/login')">登录</el-button>
+            <el-button type="primary" class="brand-button" :icon="User" @click="go('/auth/login')">
+              登录
+            </el-button>
           </nav>
         </div>
       </el-header>
 
-      <el-main class="home-main">
+      <el-main id="main-content" class="landing-main">
         <section class="hero">
-          <div class="hero-container">
-            <div class="hero-content">
-              <h1>
-                一次温暖的记录
-                <span>让情绪被看见</span>
-              </h1>
-              <p>
-                围绕心理知识、情绪日志、咨询记录和后续 MaxKB 接入，构建一个更易使用、
-                更便于管理的心理健康辅助系统。
-              </p>
-              <div class="hero-actions">
-                <el-button type="primary" size="large" :icon="ChatDotRound" @click="go('/auth/login')">
-                  开始使用
-                </el-button>
-                <el-button size="large" :icon="Reading" @click="go('/customer/knowledge')">
-                  查看知识库
-                </el-button>
-              </div>
+          <div class="hero-copy">
+            <span class="eyebrow">MaxKB 已接入</span>
+            <h1>
+              用一个轻量助手
+              <span>承接每次情绪表达</span>
+            </h1>
+            <p>
+              面向心理健康辅助场景，整合 AI 咨询、知识阅读、情绪日志和后台数据展示。
+              用户可以更自然地表达状态，管理端也能更清楚地跟进内容与记录。
+            </p>
+            <div class="hero-actions">
+              <el-button
+                type="primary"
+                size="large"
+                class="brand-button"
+                :icon="ChatDotRound"
+                @click="go('/auth/login')"
+              >
+                开始使用
+              </el-button>
+              <button class="text-link" type="button" @click="go('/knowledge')">
+                先浏览心理知识
+                <el-icon><ArrowRight /></el-icon>
+              </button>
             </div>
+          </div>
 
-            <div class="hero-visual" aria-label="心理健康AI助手品牌标识">
-              <div class="logo-showcase">
-                <div class="logo-halo"></div>
-                <img src="@/assets/logo.png" alt="心理健康AI助手品牌 Logo" class="hero-logo" />
-                <div class="brand-caption">
-                  <strong>AI Psychological Assistant</strong>
-                  <span>温柔记录，理性支持</span>
-                </div>
+          <div class="hero-showcase" aria-label="心理健康AI助手功能预览">
+            <BrandMascot />
+            <div class="metric-strip">
+              <div>
+                <strong>4</strong>
+                <span>核心模块</span>
               </div>
-              <div class="visual-card visual-card-top">
-                <el-icon><Notebook /></el-icon>
-                <span>每日情绪记录</span>
+              <div>
+                <strong>MaxKB</strong>
+                <span>对话能力</span>
               </div>
-              <div class="visual-card visual-card-bottom">
-                <el-icon><Lock /></el-icon>
-                <span>隐私数据保护</span>
+              <div>
+                <strong>UTF-8</strong>
+                <span>本地部署友好</span>
               </div>
             </div>
           </div>
         </section>
 
-        <section class="features">
-          <div class="section-head">
-            <h2>为什么选择我们</h2>
-            <p>把心理支持流程拆成清晰的模块，让学习、记录和管理都更轻松。</p>
+        <section class="preview-section">
+          <div class="section-title">
+            <span>页面预览</span>
+            <h2>了解核心功能</h2>
+            <p>横向滑动查看用户首页、AI 咨询、知识库、情绪日志和后台数据页面。</p>
           </div>
 
-          <el-row :gutter="22">
-            <el-col v-for="item in features" :key="item.title" :xs="24" :sm="12" :lg="6">
-              <el-card class="feature-card" shadow="hover" @click="go(item.path)">
-                <div class="feature-icon">
-                  <el-icon><component :is="item.icon" /></el-icon>
+          <el-carousel
+            ref="previewCarouselRef"
+            class="preview-carousel"
+            height="520px"
+            trigger="click"
+            arrow="always"
+            indicator-position="outside"
+            :autoplay="true"
+            :loop="true"
+            :pause-on-hover="false"
+            :interval="3600"
+          >
+            <el-carousel-item v-for="item in previews" :key="item.title">
+              <article class="preview-slide" :class="item.theme" @click="go(item.path)">
+                <div class="preview-meta">
+                  <span>{{ item.kicker }}</span>
+                  <h3>{{ item.title }}</h3>
+                  <p>{{ item.desc }}</p>
+                  <button type="button" class="preview-action">
+                    查看页面
+                    <el-icon><ArrowRight /></el-icon>
+                  </button>
                 </div>
-                <h3>{{ item.title }}</h3>
-                <p>{{ item.desc }}</p>
-              </el-card>
-            </el-col>
-          </el-row>
-        </section>
 
-        <section class="stats">
-          <div v-for="item in stats" :key="item.label" class="stat-item">
-            <strong>{{ item.value }}</strong>
-            <span>{{ item.label }}</span>
-          </div>
+                <div class="screen-shot" :class="item.screen" aria-hidden="true">
+                  <img v-if="item.image" :src="item.image" :alt="item.title" />
+                  <template v-else>
+                    <div class="screen-topbar">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                    <div class="screen-body">
+                      <div class="screen-sidebar">
+                        <i v-for="n in 4" :key="n"></i>
+                      </div>
+                      <div class="screen-content">
+                        <div class="screen-title"></div>
+                        <div class="screen-line long"></div>
+                        <div class="screen-line"></div>
+                        <div class="mini-grid">
+                          <b v-for="n in item.blocks" :key="n"></b>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </article>
+            </el-carousel-item>
+          </el-carousel>
         </section>
 
         <section class="cta">
           <div>
-            <h2>开始你的心理健康管理之旅</h2>
-            <p>先完成可靠的内容与记录闭环，后续再通过 MaxKB 扩展智能问答能力。</p>
+            <span>准备进入系统</span>
+            <h2>从一次情绪记录开始，让后续咨询有迹可循</h2>
+            <p>登录后可以进入用户端体验知识库、情绪日志和 AI 咨询页面。</p>
           </div>
-          <el-button type="primary" size="large" :icon="User" @click="go('/auth/login')">
+          <el-button type="primary" class="brand-button" size="large" :icon="User" @click="go('/auth/login')">
             进入系统
           </el-button>
         </section>
       </el-main>
 
-      <el-footer class="home-footer">
+      <el-footer class="landing-footer">
         <div class="footer-shell">
           <div class="footer-brand">
-            <span>心理健康AI助手</span>
-            <p>让每一次情绪表达都被认真对待。</p>
+            <strong>心理健康AI助手</strong>
+            <p>Vue3 / Element Plus / Spring Boot / MaxKB 课程项目展示。</p>
           </div>
-
-          <div class="footer-links">
-            <div>
-              <h4>产品</h4>
-              <button type="button" @click="go('/customer/knowledge')">知识库</button>
-              <button type="button" @click="go('/user/emotion')">情绪日志</button>
-              <button type="button" @click="go('/user/consultations')">咨询记录</button>
-            </div>
-            <div>
-              <h4>关于</h4>
-              <button type="button" @click="privacyVisible = true">隐私政策</button>
-              <button type="button" @click="go('/auth/login')">登录系统</button>
-            </div>
+          <div class="footer-meta">
+            <span>© 2026 AI Psychological Assistant System</span>
+            <button type="button" @click="privacyVisible = true">隐私政策</button>
+            <button type="button" @click="go('/auth/login')">登录系统</button>
           </div>
-        </div>
-
-        <div class="footer-bottom">
-          <span>© 2026 AI Psychological Assistant System. All rights reserved.</span>
         </div>
       </el-footer>
     </el-container>
 
-    <el-dialog
-      v-model="privacyVisible"
-      title="隐私政策"
-      width="640px"
-      class="privacy-dialog"
-      destroy-on-close
-    >
+    <el-dialog v-model="privacyVisible" title="隐私政策" width="640px" destroy-on-close>
       <div class="privacy-content">
         <p>
           心理健康AI助手重视用户隐私与心理健康数据安全。系统仅在提供心理知识浏览、
@@ -142,573 +166,831 @@
           部署到真实服务器前，应启用 HTTPS、完善 Token 鉴权、密码加密、权限控制和操作日志，
           避免在页面中展示不必要的敏感信息。
         </p>
-        <p>
-          项目演示数据仅用于课程展示和功能验证，不应包含真实敏感心理咨询内容。
-        </p>
+        <p>项目演示数据仅用于课程展示和功能验证，不应包含真实敏感心理咨询内容。</p>
       </div>
       <template #footer>
-        <el-button type="primary" @click="privacyVisible = false">我已了解</el-button>
+        <el-button type="primary" class="brand-button" @click="privacyVisible = false">
+          我已了解
+        </el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import {
-  ChatDotRound,
-  DataAnalysis,
-  House,
-  Lock,
-  Notebook,
-  Reading,
-  User,
-} from '@element-plus/icons-vue'
+import { ArrowRight, ChatDotRound, House, Reading, User } from '@element-plus/icons-vue'
+import BrandMascot from '@/components/BrandMascot.vue'
+
+const homePreview = new URL('@/assets/home.png', import.meta.url).href
+const chatPreview = new URL('@/assets/chat.png', import.meta.url).href
+const knowledgePreview = new URL('@/assets/knowledge.png', import.meta.url).href
+const emotionPreview = new URL('@/assets/emotion.png', import.meta.url).href
+const backendPreview = new URL('@/assets/backend.png', import.meta.url).href
 
 const router = useRouter()
 const privacyVisible = ref(false)
+const previewCarouselRef = ref(null)
+let previewTimer = null
 
 const go = (path) => {
   router.push(path)
 }
 
-const features = [
+const previews = [
   {
-    title: 'AI 智能对话',
-    desc: '预留 MaxKB 接入能力，后续可扩展为心理问答与陪伴式对话。',
+    kicker: 'Customer home',
+    title: '用户首页',
+    desc: '聚合咨询、知识库和情绪记录入口。',
     path: '/auth/login',
-    icon: ChatDotRound,
+    theme: 'theme-home',
+    screen: 'screen-home',
+    blocks: 4,
+    image: homePreview,
   },
   {
-    title: '情绪日志',
-    desc: '记录每日情绪评分、睡眠质量、压力水平和触发因素。',
-    path: '/user/emotion',
-    icon: Notebook,
+    kicker: 'MaxKB chat',
+    title: 'AI 咨询',
+    desc: '全屏嵌入 MaxKB，对话页面更沉浸。',
+    path: '/auth/login',
+    theme: 'theme-chat',
+    screen: 'screen-chat',
+    blocks: 2,
+    image: chatPreview,
   },
   {
+    kicker: 'Knowledge',
     title: '知识库',
-    desc: '维护心理健康科普文章，支持分类、标签和发布状态管理。',
-    path: '/customer/knowledge',
-    icon: Reading,
+    desc: '分类筛选、搜索和文章阅读集中展示。',
+    path: '/knowledge',
+    theme: 'theme-knowledge',
+    screen: 'screen-knowledge',
+    blocks: 5,
+    image: knowledgePreview,
   },
   {
-    title: '数据分析',
-    desc: '汇总知识、咨询和情绪数据，帮助管理端了解系统使用情况。',
-    path: '/user/dashboard',
-    icon: DataAnalysis,
+    kicker: 'Emotion diary',
+    title: '情绪日志',
+    desc: '记录心情、压力、睡眠和触发事件。',
+    path: '/auth/login',
+    theme: 'theme-emotion',
+    screen: 'screen-emotion',
+    blocks: 3,
+    image: emotionPreview,
+  },
+  {
+    kicker: 'Dashboard',
+    title: '后台数据',
+    desc: '用图表汇总文章、咨询与情绪日志。',
+    path: '/auth/login',
+    theme: 'theme-dashboard',
+    screen: 'screen-dashboard',
+    blocks: 6,
+    image: backendPreview,
   },
 ]
 
-const stats = [
-  { value: '4+', label: '核心功能模块' },
-  { value: '24h', label: '随时记录与查看' },
-  { value: '100%', label: '自主管理数据' },
-  { value: 'MaxKB', label: '后续智能接入' },
-]
+onMounted(() => {
+  previewTimer = window.setInterval(() => {
+    previewCarouselRef.value?.next()
+  }, 3600)
+})
+
+onBeforeUnmount(() => {
+  if (previewTimer) {
+    window.clearInterval(previewTimer)
+  }
+})
 </script>
 
 <style scoped>
-.home-page {
-  --brand-primary: #8a68d6;
-  --brand-primary-deep: #30284f;
-  --brand-accent: #ee9fc9;
-  --brand-accent-soft: #fff2f8;
-  --brand-bg: #fff7fb;
-  --text-main: #30284f;
-  --text-soft: #69627b;
-  --panel-bg: #ffffff;
-  --footer-bg: #26213e;
+.landing-page {
+  --brand-primary: #37c993;
+  --brand-primary-dark: #16986a;
+  --brand-deep: #263445;
+  --brand-ink: #17212d;
+  --brand-muted: #667482;
+  --brand-soft: #eafbf4;
+  --brand-line: rgba(38, 52, 69, 0.1);
+  --surface: rgba(255, 255, 255, 0.78);
+  --shadow: 0 26px 70px rgba(30, 58, 74, 0.12);
 
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--brand-bg) 0%, #f7f2ff 52%, #ffffff 100%);
-  color: var(--text-main);
+  color: var(--brand-deep);
+  background:
+    radial-gradient(circle at 16% 10%, rgba(100, 237, 172, 0.22), transparent 30%),
+    radial-gradient(circle at 84% 8%, rgba(138, 104, 214, 0.12), transparent 28%),
+    linear-gradient(180deg, #f7fffb 0%, #f3f8fb 52%, #ffffff 100%);
+  font-family:
+    "HarmonyOS Sans SC",
+    "Microsoft YaHei",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
-.home-layout {
-  min-height: 100vh;
+.landing-page::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+  background-image:
+    linear-gradient(rgba(38, 52, 69, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(38, 52, 69, 0.03) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.72), transparent 72%);
 }
 
-.home-header {
+.skip-link {
+  position: fixed;
+  left: 18px;
+  top: 12px;
+  z-index: 50;
+  padding: 9px 12px;
+  border-radius: 6px;
+  background: var(--brand-ink);
+  color: #fff;
+  opacity: 0;
+  transform: translateY(-18px);
+  transition: 0.2s ease;
+}
+
+.skip-link:focus {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-header {
   position: sticky;
   top: 0;
   z-index: 20;
   height: 72px !important;
-  border-bottom: 0;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 8px 30px rgba(86, 72, 113, 0.08);
+  padding: 0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(247, 255, 251, 0.82);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 34px rgba(38, 52, 69, 0.06);
+}
+
+.nav-shell,
+.hero,
+.preview-section,
+.cta,
+.footer-shell {
+  max-width: 1180px;
+  margin: 0 auto;
 }
 
 .nav-shell {
   display: flex;
+  height: 100%;
   align-items: center;
   justify-content: space-between;
-  max-width: 1160px;
-  height: 100%;
-  margin: 0 auto;
   padding: 0 24px;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  min-width: 0;
+  gap: 10px;
   border: 0;
   background: transparent;
-  color: var(--text-main);
-  font-size: 18px;
-  font-weight: 800;
+  color: var(--brand-ink);
   cursor: pointer;
+  font-size: 18px;
+  font-weight: 850;
 }
 
-.brand-logo {
-  width: 34px;
-  height: 34px;
+.brand img {
+  width: 36px;
+  height: 36px;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-.nav-btn {
-  color: var(--text-soft);
-  font-weight: 600;
+.nav-button {
+  color: var(--brand-muted);
+  transition: transform 0.22s ease, color 0.22s ease, background 0.22s ease;
 }
 
-.nav-btn.active {
-  color: var(--brand-primary);
+.nav-button.active,
+.nav-button:hover {
+  background: rgba(55, 201, 147, 0.11);
+  color: var(--brand-primary-dark);
 }
 
-.login-btn {
+.brand-button {
   border: 0;
-  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dark));
   color: #fff;
-  font-weight: 700;
+  font-weight: 750;
+  box-shadow: 0 14px 28px rgba(55, 201, 147, 0.22);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
 }
 
-.home-main {
+.brand-button:hover {
+  filter: saturate(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(55, 201, 147, 0.26);
+}
+
+.brand-button:active,
+.preview-slide:active,
+.text-link:active {
+  transform: scale(0.98);
+}
+
+.brand:focus-visible,
+.text-link:focus-visible,
+.footer-meta button:focus-visible,
+.preview-slide:focus-visible {
+  outline: 3px solid rgba(55, 201, 147, 0.28);
+  outline-offset: 4px;
+}
+
+.landing-main {
   padding: 0;
 }
 
 .hero {
-  padding: 88px 24px 72px;
-}
-
-.hero-container {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-  gap: 56px;
+  grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
+  gap: 62px;
   align-items: center;
-  max-width: 1160px;
-  margin: 0 auto;
+  padding: 98px 24px 86px;
 }
 
-.hero-content {
-  max-width: 640px;
+.hero-copy {
+  max-width: 680px;
 }
 
-.hero-content h1 {
-  margin-bottom: 22px;
-  color: var(--text-main);
-  font-size: 56px;
-  line-height: 1.12;
-  font-weight: 900;
+.eyebrow,
+.section-title span,
+.cta span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 18px;
+  padding: 7px 10px;
+  border: 1px solid rgba(55, 201, 147, 0.22);
+  border-radius: 6px;
+  background: rgba(234, 251, 244, 0.9);
+  color: var(--brand-primary-dark);
+  font-size: 13px;
+  font-weight: 800;
 }
 
-.hero-content h1 span {
+.hero h1 {
+  max-width: 760px;
+  margin-bottom: 24px;
+  color: var(--brand-ink);
+  font-size: clamp(42px, 5.2vw, 68px);
+  line-height: 1.05;
+  font-weight: 920;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.hero h1 span {
   display: block;
-  color: var(--brand-primary);
+  color: var(--brand-primary-dark);
 }
 
-.hero-content p {
-  color: var(--text-soft);
+.hero p {
+  max-width: 620px;
+  color: var(--brand-muted);
   font-size: 18px;
   line-height: 1.9;
+  text-wrap: pretty;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 18px;
+  align-items: center;
   margin-top: 34px;
 }
 
-.hero-actions .el-button--primary,
-.cta .el-button--primary,
-.privacy-dialog :deep(.el-button--primary) {
-  border: 0;
-  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
-}
-
-.hero-visual {
-  position: relative;
-  display: flex;
-  min-height: 430px;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  background:
-    radial-gradient(circle at 28% 24%, rgba(238, 159, 201, 0.25), transparent 30%),
-    radial-gradient(circle at 76% 72%, rgba(138, 104, 214, 0.22), transparent 34%),
-    linear-gradient(145deg, #ffffff 0%, #fbf4ff 100%);
-  box-shadow: 0 28px 70px rgba(92, 74, 125, 0.18);
-}
-
-.logo-showcase {
-  position: relative;
-  display: grid;
-  justify-items: center;
-  gap: 22px;
-  text-align: center;
-}
-
-.logo-halo {
-  position: absolute;
-  top: 18px;
-  width: 230px;
-  height: 230px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(138, 104, 214, 0.18), rgba(238, 159, 201, 0.24));
-  filter: blur(4px);
-}
-
-.hero-logo {
-  position: relative;
-  z-index: 1;
-  width: 168px;
-  height: 168px;
-  padding: 28px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 18px 45px rgba(78, 60, 112, 0.16);
-}
-
-.brand-caption {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: 8px;
-}
-
-.brand-caption strong {
-  color: var(--text-main);
-  font-size: 20px;
-}
-
-.brand-caption span {
-  color: var(--brand-primary);
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.visual-card {
-  position: absolute;
+.text-link {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 13px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.82);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--text-main);
-  font-weight: 700;
-  box-shadow: 0 12px 30px rgba(70, 60, 90, 0.12);
-}
-
-.visual-card .el-icon {
-  color: var(--brand-primary);
-  font-size: 20px;
-}
-
-.visual-card-top {
-  top: 24px;
-  left: 24px;
-}
-
-.visual-card-bottom {
-  right: 24px;
-  bottom: 24px;
-}
-
-.features {
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 48px 24px 64px;
-}
-
-.section-head {
-  margin-bottom: 28px;
-  text-align: center;
-}
-
-.section-head h2 {
-  margin-bottom: 10px;
-  color: var(--text-main);
-  font-size: 34px;
-  font-weight: 850;
-}
-
-.section-head p {
-  color: var(--text-soft);
-  font-size: 16px;
-}
-
-.feature-card {
-  min-height: 230px;
-  margin-bottom: 22px;
+  gap: 6px;
   border: 0;
-  border-radius: 8px;
+  background: transparent;
+  color: var(--brand-deep);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font: inherit;
+  font-weight: 760;
+  transition: color 0.22s ease, transform 0.22s ease;
 }
 
-.feature-card:hover {
-  transform: translateY(-6px);
+.text-link:hover {
+  color: var(--brand-primary-dark);
+  transform: translateX(3px);
 }
 
-.feature-card :deep(.el-card__body) {
-  display: flex;
+.hero-showcase {
+  position: relative;
+  display: grid;
+  min-height: 470px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 18px 18px 42px 18px;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(100, 237, 172, 0.24), transparent 34%),
+    radial-gradient(circle at 76% 70%, rgba(55, 201, 147, 0.16), transparent 36%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(238, 252, 246, 0.78));
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.hero-showcase::after {
+  position: absolute;
+  inset: auto -18% -22% 12%;
+  height: 140px;
+  content: "";
+  background: linear-gradient(90deg, rgba(55, 201, 147, 0.18), rgba(138, 104, 214, 0.12));
+  filter: blur(28px);
+  transform: rotate(-8deg);
+}
+
+.metric-strip {
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  bottom: 22px;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.metric-strip div {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.metric-strip strong,
+.metric-strip span {
+  display: block;
+}
+
+.metric-strip strong {
+  color: var(--brand-ink);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-strip span {
+  margin-top: 3px;
+  color: var(--brand-muted);
+  font-size: 12px;
+}
+
+.preview-section {
+  padding: 34px 24px 92px;
+}
+
+.section-title {
+  max-width: 760px;
+  margin-bottom: 32px;
+}
+
+.section-title h2,
+.cta h2 {
+  color: var(--brand-ink);
+  font-size: clamp(30px, 3vw, 42px);
+  line-height: 1.18;
+  font-weight: 880;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.section-title p,
+.cta p,
+.privacy-content {
+  color: var(--brand-muted);
+  line-height: 1.8;
+}
+
+.section-title p {
+  margin-top: 12px;
+  max-width: 620px;
+}
+
+.preview-carousel {
+  border-radius: 28px;
+}
+
+.preview-carousel :deep(.el-carousel__container) {
+  overflow: visible;
+}
+
+.preview-slide {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+  gap: 28px;
   height: 100%;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 26px;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
 }
 
-.feature-icon {
-  display: inline-flex;
-  width: 52px;
-  height: 52px;
+.preview-slide:hover {
+  box-shadow: 0 30px 80px rgba(30, 58, 74, 0.16);
+}
+
+.preview-slide::before {
+  position: absolute;
+  inset: -22% -10% auto auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  content: "";
+  background: rgba(55, 201, 147, 0.16);
+  filter: blur(2px);
+}
+
+.theme-chat::before {
+  background: rgba(138, 104, 214, 0.16);
+}
+
+.theme-knowledge::before {
+  background: rgba(79, 168, 255, 0.14);
+}
+
+.theme-emotion::before {
+  background: rgba(255, 185, 104, 0.18);
+}
+
+.theme-dashboard::before {
+  background: rgba(38, 52, 69, 0.12);
+}
+
+.preview-meta {
+  position: relative;
+  z-index: 1;
+}
+
+.preview-meta span {
+  color: var(--brand-primary-dark);
+  font-size: 13px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.preview-meta h3 {
+  margin: 8px 0 10px;
+  color: var(--brand-ink);
+  font-size: 30px;
+}
+
+.preview-meta p {
+  max-width: 360px;
+  color: var(--brand-muted);
+  line-height: 1.72;
+}
+
+.screen-shot {
+  position: relative;
+  align-self: stretch;
+  min-height: 420px;
+  border: 1px solid rgba(38, 52, 69, 0.08);
+  border-radius: 22px;
+  background: #f8fffb;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+  overflow: hidden;
+}
+
+.screen-chat .screen-sidebar {
+  background: rgba(138, 104, 214, 0.12);
+}
+
+.screen-chat .screen-title {
+  width: 62%;
+  background: #8a68d6;
+}
+
+.screen-chat .mini-grid {
+  grid-template-columns: 1fr;
+}
+
+.screen-chat .mini-grid b {
+  min-height: 82px;
+  background: rgba(138, 104, 214, 0.16);
+}
+
+.screen-knowledge .screen-body {
+  grid-template-columns: 1fr;
+}
+
+.screen-knowledge .screen-sidebar {
+  display: none;
+}
+
+.screen-knowledge .mini-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.screen-knowledge .mini-grid b {
+  min-height: 78px;
+  background: rgba(65, 214, 255, 0.16);
+}
+
+.screen-emotion .screen-title {
+  width: 40%;
+  background: #f0a640;
+}
+
+.screen-emotion .mini-grid b {
+  min-height: 96px;
+  background: rgba(240, 166, 64, 0.16);
+}
+
+.screen-dashboard .screen-body {
+  grid-template-columns: 70px 1fr;
+}
+
+.screen-dashboard .mini-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.screen-shot > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.screen-topbar {
+  display: flex;
+  gap: 7px;
   align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background: var(--brand-accent-soft);
-  color: var(--brand-primary);
-  font-size: 25px;
+  height: 34px;
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(38, 52, 69, 0.08);
+  background: rgba(255, 255, 255, 0.76);
 }
 
-.feature-card h3 {
-  color: var(--text-main);
-  font-size: 19px;
-  font-weight: 800;
+.screen-topbar span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #37c993;
 }
 
-.feature-card p {
-  color: var(--text-soft);
-  font-size: 14px;
-  line-height: 1.75;
+.screen-topbar span:nth-child(2) {
+  background: #92e4c6;
 }
 
-.stats {
+.screen-topbar span:nth-child(3) {
+  background: #cfeee4;
+}
+
+.screen-body {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  max-width: 1160px;
-  margin: 0 auto 64px;
-  padding: 34px 24px;
-  border-radius: 8px;
-  background: var(--brand-primary-deep);
-  color: #fff;
+  grid-template-columns: 86px 1fr;
+  min-height: 236px;
 }
 
-.stat-item {
+.screen-sidebar {
   display: grid;
-  gap: 8px;
-  text-align: center;
+  align-content: start;
+  gap: 10px;
+  padding: 18px 14px;
+  background: rgba(234, 251, 244, 0.74);
 }
 
-.stat-item strong {
-  font-size: 34px;
-  font-weight: 900;
+.screen-sidebar i {
+  height: 24px;
+  border-radius: 8px;
+  background: rgba(55, 201, 147, 0.2);
 }
 
-.stat-item span {
-  color: #ded7f6;
-  font-size: 14px;
+.screen-content {
+  padding: 20px;
+}
+
+.screen-title {
+  width: 46%;
+  height: 28px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  background: var(--brand-ink);
+}
+
+.screen-line {
+  width: 62%;
+  height: 10px;
+  margin-bottom: 10px;
+  border-radius: 999px;
+  background: rgba(102, 116, 130, 0.2);
+}
+
+.screen-line.long {
+  width: 82%;
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.mini-grid b {
+  min-height: 54px;
+  border-radius: 12px;
+  background: rgba(55, 201, 147, 0.14);
+}
+
+.preview-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin-top: 24px;
+  border: 0;
+  background: transparent;
+  color: var(--brand-primary-dark);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 850;
 }
 
 .cta {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  max-width: 1160px;
-  margin: 0 auto 72px;
+  gap: 28px;
+  margin-bottom: 78px;
   padding: 42px 44px;
-  border-radius: 8px;
-  background: var(--panel-bg);
-  box-shadow: 0 22px 55px rgba(85, 74, 110, 0.12);
-}
-
-.cta h2 {
-  margin-bottom: 10px;
-  color: var(--text-main);
-  font-size: 30px;
-  font-weight: 850;
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(100, 237, 172, 0.2), transparent 30%),
+    rgba(255, 255, 255, 0.84);
+  box-shadow: var(--shadow);
 }
 
 .cta p {
-  color: var(--text-soft);
-  line-height: 1.75;
+  margin-top: 10px;
 }
 
-.home-footer {
+.landing-footer {
   height: auto !important;
   padding: 0 !important;
-  background: var(--footer-bg);
-  color: #ded7f6;
+  background: #17212d;
+  color: #d9e4e2;
 }
 
 .footer-shell {
   display: flex;
   justify-content: space-between;
-  gap: 40px;
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 42px 24px 30px;
+  gap: 24px;
+  padding: 32px 24px;
 }
 
-.footer-brand span {
-  display: inline-block;
-  margin-bottom: 12px;
-  color: #fff;
-  font-size: 20px;
-  font-weight: 850;
-}
-
-.footer-brand p {
-  color: #c8c0e6;
-}
-
-.footer-links {
-  display: flex;
-  gap: 70px;
-}
-
-.footer-links h4 {
-  margin-bottom: 12px;
-  color: #fff;
-  font-size: 15px;
-}
-
-.footer-links button {
+.footer-brand strong {
   display: block;
-  margin: 8px 0;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 18px;
+}
+
+.footer-brand p,
+.footer-meta {
+  color: #aab8b5;
+  font-size: 13px;
+}
+
+.footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.footer-meta button {
   border: 0;
   background: transparent;
-  color: #c8c0e6;
+  color: #d9e4e2;
   cursor: pointer;
   font: inherit;
-  text-align: left;
+  transition: color 0.2s ease;
 }
 
-.footer-links button:hover {
-  color: #fff;
-}
-
-.footer-bottom {
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 18px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  color: #b8aedc;
-  font-size: 13px;
+.footer-meta button:hover {
+  color: #64edac;
 }
 
 .privacy-content {
   display: grid;
   gap: 14px;
-  color: #5f6472;
-  line-height: 1.8;
 }
 
-@media (max-width: 860px) {
-  .home-header {
+@media (max-width: 940px) {
+  .landing-header {
     height: auto !important;
   }
 
   .nav-shell,
-  .footer-shell,
-  .cta {
+  .cta,
+  .footer-shell {
     flex-direction: column;
     align-items: flex-start;
   }
 
   .nav-shell {
-    gap: 14px;
+    gap: 12px;
     padding: 14px 18px;
   }
 
   .nav-links {
-    width: 100%;
     flex-wrap: wrap;
   }
 
   .hero {
-    padding: 52px 18px 42px;
-  }
-
-  .hero-container {
     grid-template-columns: 1fr;
-    gap: 34px;
   }
 
-  .hero-content h1 {
-    font-size: 36px;
+  .hero {
+    padding: 58px 18px 52px;
   }
 
-  .hero-content p {
-    font-size: 16px;
+  .hero-showcase {
+    min-height: 420px;
   }
 
-  .hero-visual {
-    min-height: 320px;
+  .preview-slide {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
   }
 
-  .hero-logo {
-    width: 132px;
-    height: 132px;
+  .screen-shot {
+    min-height: 280px;
   }
 
-  .stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin: 0 18px 52px;
-    row-gap: 28px;
-  }
-
-  .cta {
-    margin: 0 18px 56px;
-    padding: 30px 24px;
-  }
-
-  .footer-links {
-    flex-direction: column;
-    gap: 24px;
+  .footer-meta {
+    justify-content: flex-start;
   }
 }
 
-@media (max-width: 520px) {
-  .brand span {
-    font-size: 16px;
+@media (max-width: 620px) {
+  .hero h1 {
+    font-size: 38px;
   }
 
-  .hero-actions,
-  .nav-links {
-    align-items: stretch;
+  .hero-showcase {
+    min-height: 380px;
   }
 
-  .hero-actions .el-button {
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .stats {
+  .metric-strip {
+    left: 12px;
+    right: 12px;
     grid-template-columns: 1fr;
+  }
+
+  .metric-strip div:not(:first-child) {
+    display: none;
+  }
+
+  .preview-section {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .cta {
+    padding: 26px;
+  }
+
+  .preview-carousel {
+    height: auto;
+  }
+
+  .preview-carousel :deep(.el-carousel__container) {
+    height: 580px !important;
+  }
+
+  .screen-body {
+    grid-template-columns: 64px 1fr;
   }
 }
 </style>

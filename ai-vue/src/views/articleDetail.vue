@@ -71,7 +71,7 @@ const formatContent = (content) => {
 }
 
 const goBack = () => {
-  router.push('/customer/knowledge')
+  router.push(route.path.startsWith('/knowledge') ? '/knowledge' : '/customer/knowledge')
 }
 
 onMounted(() => {

@@ -27,7 +27,9 @@ CREATE TABLE sys_user (
   avatar_url VARCHAR(512) DEFAULT NULL COMMENT 'Avatar URL',
   email VARCHAR(128) DEFAULT NULL COMMENT 'Email',
   phone VARCHAR(32) DEFAULT NULL COMMENT 'Phone number',
-  role VARCHAR(32) NOT NULL DEFAULT 'USER' COMMENT 'ADMIN or USER',
+  age INT DEFAULT NULL COMMENT 'Age',
+  gender VARCHAR(16) DEFAULT NULL COMMENT 'Gender: male/female/unknown',
+  role VARCHAR(32) NOT NULL DEFAULT 'USER' COMMENT 'SUPER_ADMIN, ADMIN or USER',
   status TINYINT NOT NULL DEFAULT 1 COMMENT '1 enabled, 0 disabled',
   last_login_at DATETIME DEFAULT NULL COMMENT 'Last login time',
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Created time',
@@ -180,19 +182,19 @@ CREATE TABLE emotion_diary (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Emotion diaries';
 
 INSERT INTO sys_user
-  (id, username, password_hash, nickname, email, phone, role, status, last_login_at)
+  (id, username, password_hash, nickname, email, phone, age, gender, role, status, last_login_at)
 VALUES
-  (1, 'admin', '$2a$10$demo-password-hash-replace-in-backend', 'System Administrator', 'admin@example.com', '13800000000', 'ADMIN', 1, NOW()),
-  (2, 'student01', '$2a$10$demo-password-hash-replace-in-backend', 'Student User', 'student01@example.com', '13900000000', 'USER', 1, NOW());
+  (1, 'admin', '$2a$10$demo-password-hash-replace-in-backend', '绯荤粺绠＄悊鍛?, 'admin@example.com', '13800000000', 22, 'unknown', 'SUPER_ADMIN', 1, NOW()),
+  (2, 'student01', '$2a$10$demo-password-hash-replace-in-backend', '瀛︾敓鐢ㄦ埛', 'student01@example.com', '13900000000', 20, 'unknown', 'USER', 1, NOW());
 
 INSERT INTO knowledge_category
   (id, parent_id, name, code, description, sort_order, status)
 VALUES
-  (1, NULL, 'Emotion Management', 'emotion-management', 'Emotion awareness and regulation', 10, 1),
-  (2, NULL, 'Stress Relief', 'stress-relief', 'Stress relief methods and self help', 20, 1),
-  (3, NULL, 'Interpersonal Relationship', 'relationship', 'Relationship and communication guidance', 30, 1),
-  (4, 1, 'Anxiety', 'anxiety', 'Anxiety recognition and coping', 11, 1),
-  (5, 1, 'Sleep', 'sleep', 'Sleep quality and relaxation', 12, 1);
+  (1, NULL, '鎯呯华绠＄悊', 'emotion-management', 'Emotion awareness and regulation', 10, 1),
+  (2, NULL, '鍘嬪姏缂撹В', 'stress-relief', 'Stress relief methods and self help', 20, 1),
+  (3, NULL, '浜洪檯鍏崇郴', 'relationship', 'Relationship and communication guidance', 30, 1),
+  (4, 1, '鐒﹁檻', 'anxiety', 'Anxiety recognition and coping', 11, 1),
+  (5, 1, '鐫＄湢', 'sleep', 'Sleep quality and relaxation', 12, 1);
 
 INSERT INTO knowledge_article
   (id, title, category_id, author_id, author_name, summary, content, cover_img, tags, status, read_count, published_at)
@@ -213,8 +215,8 @@ VALUES
 INSERT INTO file_resource
   (original_name, stored_name, file_path, file_url, mime_type, file_size, business_type, business_id, business_field, uploader_id)
 VALUES
-  ('anxiety-cover.jpg', 'anxiety-cover.jpg', '/uploads/articles/anxiety-cover.jpg', 'http://159.75.169.224:1235/uploads/articles/anxiety-cover.jpg', 'image/jpeg', 245760, 'ARTICLE', '1', 'cover', 1),
-  ('relax-cover.jpg', 'relax-cover.jpg', '/uploads/articles/relax-cover.jpg', 'http://159.75.169.224:1235/uploads/articles/relax-cover.jpg', 'image/jpeg', 198240, 'ARTICLE', '2', 'cover', 1);
+  ('anxiety-cover.jpg', 'anxiety-cover.jpg', '/uploads/articles/anxiety-cover.jpg', '/api/uploads/articles/anxiety-cover.jpg', 'image/jpeg', 245760, 'ARTICLE', '1', 'cover', 1),
+  ('relax-cover.jpg', 'relax-cover.jpg', '/uploads/articles/relax-cover.jpg', '/api/uploads/articles/relax-cover.jpg', 'image/jpeg', 198240, 'ARTICLE', '2', 'cover', 1);
 
 INSERT INTO psychological_chat_session
   (id, user_id, user_nickname, session_title, last_message_content, message_count, started_at, last_message_time, status)

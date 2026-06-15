@@ -6,6 +6,7 @@ import com.example.aiserver.entity.FileResource;
 import com.example.aiserver.mapper.FileResourceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,8 +34,8 @@ public class FileController {
     public ApiResult<Map<String, Object>> upload(
             @RequestParam("file") MultipartFile file,
             @RequestParam String businessType,
-            @RequestParam String businessId,
-            @RequestParam String businessField
+            @RequestParam(required = false) String businessId,
+            @RequestParam(required = false) String businessField
     ) {
         if (file.isEmpty()) {
             throw new BusinessException("上传文件不能为空");
@@ -59,21 +60,27 @@ public class FileController {
             throw new BusinessException("文件保存失败");
         }
 
+        String normalizedBusinessId = StringUtils.hasText(businessId) ? businessId : UUID.randomUUID().toString();
+        String normalizedBusinessField = StringUtils.hasText(businessField) ? businessField : businessType;
         String filePath = publicPrefix + "/" + datePath + "/" + storedName;
+        String apiFileUrl = "/api" + filePath;
         FileResource resource = new FileResource();
         resource.setOriginalName(originalName);
         resource.setStoredName(storedName);
         resource.setFilePath(filePath);
+        resource.setFileUrl(apiFileUrl);
         resource.setMimeType(file.getContentType());
         resource.setFileSize(file.getSize());
         resource.setBusinessType(businessType);
-        resource.setBusinessId(businessId);
-        resource.setBusinessField(businessField);
+        resource.setBusinessId(normalizedBusinessId);
+        resource.setBusinessField(normalizedBusinessField);
         fileResourceMapper.insert(resource);
 
         return ApiResult.success(Map.of(
                 "id", resource.getId(),
                 "filePath", filePath,
+                "fileUrl", apiFileUrl,
+                "url", apiFileUrl,
                 "originalName", originalName
         ));
     }

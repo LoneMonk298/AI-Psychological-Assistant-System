@@ -70,3 +70,21 @@ export function logout() {
 export function getAnalyticsOverview() {
     return service.get(`/data-analytics/overview`)
 }
+
+export function updateAdminPassword(data) {
+    return service.put('/user/password', data)
+}
+
+export function createAdmin(data) {
+    return service.post('/user/admin', data)
+}
+
+export function sendResetPasswordCode(email) {
+    return service.post('/user/password/reset-code', { email }, {
+        params: { email }
+    })
+}
+
+export function resetPasswordByEmail(data) {
+    return service.put('/user/password/reset', data)
+}

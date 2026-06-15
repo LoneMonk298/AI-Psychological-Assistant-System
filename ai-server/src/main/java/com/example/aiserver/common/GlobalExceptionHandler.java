@@ -1,5 +1,6 @@
 package com.example.aiserver.common;
 
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,6 +21,12 @@ public class GlobalExceptionHandler {
     public ApiResult<Void> handleValidationException(Exception ex) {
         log.warn("Validation exception", ex);
         return ApiResult.fail("请求参数不合法");
+    }
+
+    @ExceptionHandler({JwtException.class, NumberFormatException.class})
+    public ApiResult<Void> handleJwtException(Exception ex) {
+        log.warn("Token exception", ex);
+        return ApiResult.unauthorized("登录状态已失效，请重新登录");
     }
 
     @ExceptionHandler(Exception.class)

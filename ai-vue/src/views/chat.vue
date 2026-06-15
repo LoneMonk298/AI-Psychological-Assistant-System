@@ -1,16 +1,9 @@
 <template>
   <div class="chat-page">
-    <div class="chat-header">
-      <div>
-        <h2>AI 咨询</h2>
-        <p>由 MaxKB 提供智能问答服务</p>
-      </div>
-    </div>
-
-    <div
+    <section
       v-loading="isFrameLoading"
       element-loading-text="AI 咨询服务加载中..."
-      class="chat-frame-wrapper"
+      class="chat-frame-shell"
     >
       <iframe
         class="chat-frame"
@@ -21,7 +14,7 @@
         allow="microphone"
         @load="handleFrameLoad"
       ></iframe>
-    </div>
+    </section>
   </div>
 </template>
 
@@ -32,7 +25,7 @@ defineOptions({
   name: 'ChatView',
 })
 
-const maxkbChatUrl = 'https://maxkb.lonemonk.xyz/chat/2800d6d7256ba6a7'
+const maxkbChatUrl = 'https://maxkb.lonemonk.xyz/chat/74734a6d890b2b01'
 const isFrameLoading = ref(true)
 
 const handleFrameLoad = () => {
@@ -42,47 +35,44 @@ const handleFrameLoad = () => {
 
 <style scoped>
 .chat-page {
-  height: calc(100vh - 72px);
   display: flex;
-  flex-direction: column;
-  background: #f7f2ff;
-}
-
-.chat-header {
-  padding: 20px 24px;
+  width: 100%;
+  min-height: calc(100vh - 72px);
+  padding: 0;
   background: #fff;
-  border-bottom: 1px solid #ebe7f5;
 }
 
-.chat-header h2 {
-  margin: 0;
-  color: #30284f;
-  font-size: 22px;
-}
-
-.chat-header p {
-  margin-top: 6px;
-  color: #69627b;
-  font-size: 14px;
-}
-
-.chat-frame-wrapper {
-  flex: 1;
+.chat-frame-shell {
   position: relative;
-  padding: 16px;
-  min-height: 0;
+  flex: 1;
+  min-height: calc(100vh - 72px);
+  overflow: hidden;
+  background: #fff;
 }
 
 .chat-frame {
+  display: block;
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 72px);
+  min-height: 640px;
   border: 0;
-  border-radius: 8px;
   background: #fff;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.18s ease;
 }
 
 .chat-frame.is-loading {
   opacity: 0;
+}
+
+@media (max-width: 860px) {
+  .chat-page,
+  .chat-frame-shell {
+    min-height: calc(100vh - 64px);
+  }
+
+  .chat-frame {
+    height: calc(100vh - 64px);
+    min-height: 560px;
+  }
 }
 </style>

@@ -1,5 +1,6 @@
 package com.example.aiserver.util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,5 +35,24 @@ public class JwtUtil {
                 .expiration(Date.from(now.plus(expireHours, ChronoUnit.HOURS)))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public Claims parseToken(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    public Long parseUserId(String authorization) {
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            return null;
+        }
+        String token = authorization.substring("Bearer ".length()).trim();
+        if (token.isEmpty()) {
+            return null;
+        }
+        return Long.valueOf(parseToken(token).getSubject());
     }
 }

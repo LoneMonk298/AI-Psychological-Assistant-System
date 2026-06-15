@@ -12,7 +12,7 @@ const service = axios.create({
 service.interceptors.request.use(
     config => {
         const token = localStorage.getItem('token')
-        if (token) {
+        if (token && !config.skipAuth) {
             config.headers.Authorization = `Bearer ${token}`
         }
         return config
@@ -35,6 +35,7 @@ service.interceptors.response.use(
                    ElMessage.error(data.msg || '登录过期，请重新登录')
                    localStorage.removeItem('token')
                    localStorage.removeItem('userInfo')
+                   localStorage.removeItem('privacyAccepted')
                    window.location.href = '/auth/login'
                    return Promise.reject(new Error(data.msg || '登录过期'))
                } else {

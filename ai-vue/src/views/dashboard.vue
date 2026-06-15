@@ -112,7 +112,25 @@
     const iconUrl4 = new URL('@/assets/images/smile.png', import.meta.url).href
 
 
-    const aiData = ref({})
+    const createEmptyAnalytics = () => ({
+        systemOverview: {
+            totalUsers: 0,
+            activeUsers: 0,
+            totalDiaries: 0,
+            todayNewDiaries: 0,
+            totalSessions: 0,
+            todayNewSessions: 0,
+            avgMoodScore: 0,
+        },
+        consultationStats: {
+            totalSessions: 0,
+            avgDurationMinutes: 0,
+        },
+        emotionTrend: [],
+        consultationTrend: [],
+    })
+
+    const aiData = ref(createEmptyAnalytics())
 
     // 情绪趋势
     let emotionChart = null
@@ -341,9 +359,10 @@
         try {
             const res = await getAnalyticsOverview()
             console.log('dashboard overview response:', res)
-            aiData.value = (res && res.data) ? res.data : res
+            aiData.value = { ...createEmptyAnalytics(), ...((res && res.data) ? res.data : res) }
         } catch (err) {
             console.error('getAnalyticsOverview error', err)
+            aiData.value = createEmptyAnalytics()
         }
     }
 

@@ -70,9 +70,9 @@
 import { ref, computed,reactive,nextTick,watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { uploadFile } from '@/api/admin'
-import { filebaseURL } from '@/config/index'
 import RichTextEditor from '@/components/RichTextEditor.vue'
 import { addArticle,updateArticle } from '@/api/admin'
+import { getArticleCover, resolveFileUrl } from '@/utils/fileUrl'
 
 const props = defineProps({
   modelValue: {
@@ -146,14 +146,6 @@ const commonTags = [
 const imgUrl = ref('')
 const uploadError = ref('')
 
-const resolveFileUrl = (filePath) => {
-  if (!filePath) return ''
-  if (/^https?:\/\//.test(filePath) || filePath.startsWith('/api/')) {
-    return filePath
-  }
-  return filebaseURL + filePath
-}
-
 const beforeUpload = (file) => {
     // 针对图片上传的校验
     const isImage = file.type.startsWith('image/')
@@ -177,13 +169,14 @@ const handleUpload = async ({file}) => {
   const fileRes = await uploadFile(file,{businessId:businessId.value})  
   console.log(fileRes)
 
-  const filePath = fileRes.data?.filePath
+  const data = fileRes?.data || {}
+  const filePath = data.filePath || data.url || data.fileUrl || data.path
   imgUrl.value = resolveFileUrl(filePath)
   formData.coverImg = filePath
 }
 
 const handlePreviewError = () => {
-  uploadError.value = '封面图片上传成功，但预览地址暂时无法访问，请确认后端已重启并启用 /api/uploads 静态资源访问。'
+  uploadError.value = '封面预览失败。'
 }
 
 const removeCover = () => {
@@ -214,10 +207,9 @@ const formRef = ref()
 
 const handleSubmit = () => {
   formRef.value.validate((valid,fields) => {
-    if (valid) {
-      loading.value = true
-      dialogVisible.value = false
-    }
+    if (!valid) return
+    loading.value = true
+    dialogVisible.value = false
     // 对象解构赋值，将formData中的属性赋值给submitData，同时将tags转换为数组格式
     const submitData = {
       ...formData,
@@ -254,7 +246,7 @@ watch(() => props.article, (newVal) => {
       //使用现有id
       businessId.value = newVal.id
       //封面url
-      imgUrl.value = resolveFileUrl(newVal.coverImg)
+      imgUrl.value = resolveFileUrl(getArticleCover(newVal))
       //将tags字符串转换为tagArray数组
       if(newVal.tags){
         formData.tagArray = newVal.tags.split(',').filter(tag => tag.trim())

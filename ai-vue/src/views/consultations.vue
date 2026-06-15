@@ -1,7 +1,7 @@
 <template>
   <div>
-    <PageHead title="咨询记录" />
-    <el-table :data="tableData" style="width: 100%">
+    <PageHead page-title="咨询记录" />
+    <el-table :data="tableData" style="width: 100%"  >
       <el-table-column label="会话ID" width="100">
         <template #default="scope">
           <el-avatar :size="36">{{ getAvatarText(scope.row.userNickname) }}</el-avatar>

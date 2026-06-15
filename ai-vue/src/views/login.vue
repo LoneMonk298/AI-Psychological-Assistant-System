@@ -44,6 +44,9 @@
                                         placeholder="Password"
                                     />
                                 </el-form-item>
+                                <div class="forgot-row">
+                                    <button type="button" @click="forgotDialogVisible = true">忘记密码？邮箱重置</button>
+                                </div>
                                 <el-form-item>
                                     <div class="captcha-group">
                                         <el-input 
@@ -129,13 +132,45 @@
                 </div>
             </div>
         </div>
+
+        <el-dialog v-model="forgotDialogVisible" title="邮箱重置密码" width="460px" destroy-on-close>
+            <el-form :model="forgotForm" label-width="86px">
+                <el-form-item label="邮箱">
+                    <el-input v-model="forgotForm.email" placeholder="请输入绑定邮箱" />
+                </el-form-item>
+                <el-form-item label="验证码">
+                    <div class="reset-code-row">
+                        <el-input v-model="forgotForm.code" placeholder="请输入邮箱验证码" />
+                        <el-button
+                            type="button"
+                            :loading="sendingCode"
+                            :disabled="resetCodeCountdown > 0"
+                            @click.prevent="handleSendResetCode"
+                        >
+                            {{ resetCodeCountdown > 0 ? `${resetCodeCountdown}s后重发` : '发送验证码' }}
+                        </el-button>
+                    </div>
+                </el-form-item>
+                <el-form-item label="新密码">
+                    <el-input v-model="forgotForm.newPassword" type="password" show-password placeholder="请输入新密码" />
+                </el-form-item>
+                <el-form-item label="确认密码">
+                    <el-input v-model="forgotForm.confirmPassword" type="password" show-password placeholder="请再次输入新密码" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button @click="forgotDialogVisible = false">取消</el-button>
+                <el-button type="primary" :loading="resettingPassword" @click="handleResetPassword">确认重置</el-button>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { onBeforeUnmount, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { login, register } from '@/api/admin'
+import { login, register, resetPasswordByEmail, sendResetPasswordCode } from '@/api/admin'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 
@@ -153,6 +188,19 @@ const loginData = reactive({
     username: '',
     password: '',
     captcha: ''
+})
+
+const forgotDialogVisible = ref(false)
+const sendingCode = ref(false)
+const resettingPassword = ref(false)
+const resetCodeCountdown = ref(0)
+let resetCodeTimer = null
+const RESET_CODE_COOLDOWN_KEY = 'passwordResetCodeCooldownUntil'
+const forgotForm = reactive({
+    email: '',
+    code: '',
+    newPassword: '',
+    confirmPassword: '',
 })
 
 const loginRules = reactive({
@@ -219,6 +267,109 @@ const refreshCaptcha = () => {
     captchaCode.value = code
 }
 refreshCaptcha()
+
+const startResetCodeCountdown = () => {
+    const cooldownUntil = Date.now() + 300 * 1000
+    localStorage.setItem(RESET_CODE_COOLDOWN_KEY, String(cooldownUntil))
+    resetCodeCountdown.value = 300
+    if (resetCodeTimer) {
+        window.clearInterval(resetCodeTimer)
+    }
+
+    resetCodeTimer = window.setInterval(() => {
+        const savedUntil = Number(localStorage.getItem(RESET_CODE_COOLDOWN_KEY) || 0)
+        resetCodeCountdown.value = Math.max(0, Math.ceil((savedUntil - Date.now()) / 1000))
+        if (resetCodeCountdown.value <= 0) {
+            resetCodeCountdown.value = 0
+            localStorage.removeItem(RESET_CODE_COOLDOWN_KEY)
+            window.clearInterval(resetCodeTimer)
+            resetCodeTimer = null
+        }
+    }, 1000)
+}
+
+const restoreResetCodeCountdown = () => {
+    const savedUntil = Number(localStorage.getItem(RESET_CODE_COOLDOWN_KEY) || 0)
+    const remain = Math.max(0, Math.ceil((savedUntil - Date.now()) / 1000))
+    if (remain > 0) {
+        resetCodeCountdown.value = remain
+        if (resetCodeTimer) {
+            window.clearInterval(resetCodeTimer)
+        }
+        resetCodeTimer = window.setInterval(() => {
+            const currentUntil = Number(localStorage.getItem(RESET_CODE_COOLDOWN_KEY) || 0)
+            resetCodeCountdown.value = Math.max(0, Math.ceil((currentUntil - Date.now()) / 1000))
+            if (resetCodeCountdown.value <= 0) {
+                localStorage.removeItem(RESET_CODE_COOLDOWN_KEY)
+                window.clearInterval(resetCodeTimer)
+                resetCodeTimer = null
+            }
+        }, 1000)
+    }
+}
+
+restoreResetCodeCountdown()
+
+const handleSendResetCode = async () => {
+    if (resetCodeCountdown.value > 0) {
+        return
+    }
+
+    const email = forgotForm.email.trim()
+    if (!email) {
+        ElMessage.warning('请先输入绑定邮箱')
+        return
+    }
+
+    sendingCode.value = true
+    try {
+        await sendResetPasswordCode(email)
+        ElMessage.success('验证码已发送，请查看邮箱')
+        startResetCodeCountdown()
+    } catch (error) {
+        console.error('发送重置密码验证码失败:', error)
+        ElMessage.warning(error?.message || '发送验证码失败，请稍后重试')
+    } finally {
+        sendingCode.value = false
+    }
+}
+
+onBeforeUnmount(() => {
+    if (resetCodeTimer) {
+        window.clearInterval(resetCodeTimer)
+    }
+})
+
+const handleResetPassword = async () => {
+    if (!forgotForm.email || !forgotForm.code || !forgotForm.newPassword) {
+        ElMessage.warning('请完整填写邮箱、验证码和新密码')
+        return
+    }
+
+    if (forgotForm.newPassword !== forgotForm.confirmPassword) {
+        ElMessage.warning('两次输入的新密码不一致')
+        return
+    }
+
+    resettingPassword.value = true
+    try {
+        await resetPasswordByEmail({
+            email: forgotForm.email,
+            code: forgotForm.code,
+            newPassword: forgotForm.newPassword,
+        })
+        ElMessage.success('密码已重置，请重新登录')
+        forgotDialogVisible.value = false
+        forgotForm.email = ''
+        forgotForm.code = ''
+        forgotForm.newPassword = ''
+        forgotForm.confirmPassword = ''
+    } catch {
+        ElMessage.warning('重置密码接口暂不可用，或验证码不正确')
+    } finally {
+        resettingPassword.value = false
+    }
+}
 
 // 登录处理
 const handleLogin = async () => {
@@ -504,6 +655,36 @@ const goHome = () => {
 }
 
 /* 提交按钮 */
+.forgot-row {
+    display: flex;
+    justify-content: flex-end;
+    margin: -0.4rem 0 0.7rem;
+}
+
+.forgot-row button {
+    border: 0;
+    background: transparent;
+    color: #8f6bd8;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.forgot-row button:hover {
+    color: #6f49c7;
+    text-decoration: underline;
+}
+
+.reset-code-row {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+.reset-code-row :deep(.el-input) {
+    flex: 1;
+}
+
 .submit-btn {
     width: 100%;
     padding: 15px;
