@@ -24,7 +24,7 @@
     <div class="navbar-right">
       <el-dropdown @command="handleCommand">
         <div class="user-info">
-          <el-avatar :size="34" :src="userInfo?.avatar || defaultAvatar" />
+          <el-avatar :size="34" :src="avatarUrl" />
           <span class="username">{{ userInfo?.nickname || userInfo?.username || '用户' }}</span>
           <el-icon><ArrowDown /></el-icon>
         </div>
@@ -54,11 +54,11 @@ import {
 } from '@element-plus/icons-vue'
 import { logout } from '@/api/admin'
 import UserProfileDialog from '@/components/UserProfileDialog.vue'
+import { normalizeUserInfo, resolveUserAvatarUrl } from '@/utils/userAvatar'
 
 const router = useRouter()
 const route = useRoute()
 
-const defaultAvatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 const profileVisible = ref(false)
 
 const navItems = [
@@ -71,11 +71,13 @@ const navItems = [
 const userInfo = computed(() => {
   try {
     const info = localStorage.getItem('userInfo')
-    return info ? JSON.parse(info) : null
+    return info ? normalizeUserInfo(JSON.parse(info)) : null
   } catch {
     return null
   }
 })
+
+const avatarUrl = computed(() => resolveUserAvatarUrl(userInfo.value || {}))
 
 const isActive = (path) => route.path === path || route.path.startsWith(`${path}/`)
 

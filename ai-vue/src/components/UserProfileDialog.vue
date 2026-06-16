@@ -13,7 +13,7 @@
     <div class="profile-dialog-body">
       <section class="profile-card">
         <div class="profile-avatar">
-          <el-avatar :size="72" :src="avatarPreview || form.avatar || defaultAvatar" />
+          <el-avatar :size="72" :src="avatarPreview || formAvatarUrl" />
           <el-upload
             :auto-upload="false"
             :show-file-list="false"
@@ -90,6 +90,11 @@ import {
   updateUserProfile,
   uploadUserAvatar,
 } from '@/api/frontend'
+import {
+  getUploadFileUrl,
+  normalizeUserInfo,
+  resolveUserAvatarUrl,
+} from '@/utils/userAvatar'
 
 const props = defineProps({
   modelValue: {
@@ -109,7 +114,6 @@ const handleClosed = () => {
   window.location.reload()
 }
 
-const defaultAvatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 const avatarPreview = ref('')
 const savingProfile = ref(false)
 const savingPassword = ref(false)
@@ -121,7 +125,10 @@ const form = reactive({
   age: null,
   gender: '',
   avatar: '',
+  avatarUrl: '',
 })
+
+const formAvatarUrl = computed(() => resolveUserAvatarUrl(form))
 
 const securityForm = reactive({
   oldPassword: '',
@@ -142,19 +149,20 @@ const getLocalUser = () => {
 }
 
 const applyProfile = (profile = {}) => {
-  const localUser = getLocalUser()
-  const data = { ...localUser, ...profile }
+  const localUser = normalizeUserInfo(getLocalUser())
+  const data = normalizeUserInfo({ ...localUser, ...profile })
   form.username = data.username || data.nickname || ''
   form.email = data.email || ''
   form.age = data.age ?? null
   form.gender = data.gender || ''
   form.avatar = data.avatar || ''
+  form.avatarUrl = data.avatarUrl || ''
   emailForm.email = data.email || ''
 }
 
 const syncLocalUser = (patch = {}) => {
-  const current = getLocalUser()
-  localStorage.setItem('userInfo', JSON.stringify({ ...current, ...patch }))
+  const current = normalizeUserInfo(getLocalUser())
+  localStorage.setItem('userInfo', JSON.stringify(normalizeUserInfo({ ...current, ...patch })))
 }
 
 const loadProfile = async () => {
@@ -175,6 +183,7 @@ const saveProfile = async () => {
     age: form.age,
     gender: form.gender,
     avatar: form.avatar,
+    avatarUrl: form.avatarUrl || form.avatar,
   }
 
   try {
@@ -243,8 +252,25 @@ const handleAvatarSelect = async (file) => {
   try {
     const res = await uploadUserAvatar(raw)
     const data = res?.data || res || {}
-    form.avatar = data.url || data.fileUrl || data.filePath || form.avatar
-    syncLocalUser({ avatar: form.avatar })
+    const uploadedUrl = getUploadFileUrl(data)
+    form.avatar = uploadedUrl || form.avatar
+    form.avatarUrl = form.avatar
+    const avatarPatch = { avatar: form.avatar, avatarUrl: form.avatarUrl }
+    syncLocalUser(avatarPatch)
+    try {
+      const profilePayload = {
+        ...normalizeUserInfo(getLocalUser()),
+        username: form.username,
+        email: form.email,
+        age: form.age,
+        gender: form.gender,
+        ...avatarPatch,
+      }
+      const profileRes = await updateUserProfile(profilePayload)
+      syncLocalUser(profileRes?.data || profilePayload)
+    } catch (profileError) {
+      console.warn('Avatar uploaded but profile persistence failed:', profileError)
+    }
     ElMessage.success('头像已上传')
   } catch (error) {
     console.error('头像上传失败:', error)

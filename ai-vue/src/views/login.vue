@@ -171,6 +171,7 @@ import { onBeforeUnmount, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { login, register, resetPasswordByEmail, sendResetPasswordCode } from '@/api/admin'
 import { ElMessage } from 'element-plus'
+import { normalizeUserInfo } from '@/utils/userAvatar'
 
 const router = useRouter()
 
@@ -402,8 +403,9 @@ const handleLogin = async () => {
             }
             
             if (token) {
+                userInfo = normalizeUserInfo(userInfo || {})
                 localStorage.setItem('token', token)
-                localStorage.setItem('userInfo', JSON.stringify(userInfo || {}))
+                localStorage.setItem('userInfo', JSON.stringify(userInfo))
                 
                 if (userInfo && (userInfo.userType === 2 || userInfo.roleType === 2 || userInfo.roleType === '2')) {
                     router.push('/user/dashboard')
@@ -473,8 +475,8 @@ const goHome = () => {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(200deg, #f3e7e9, #e3eeff);
-    background-image: url('@/assets/bg.png');
+    background: linear-gradient(200deg, rgba(243, 231, 233, 0.2), rgba(227, 238, 255, 0.2)),
+        url('@/assets/bg.webp') center center / cover no-repeat;
     z-index: 9999;
     display: flex;
     justify-content: center;
@@ -505,7 +507,7 @@ const goHome = () => {
 .welcome-box {
     width: 450px;
     height: 100%;
-    background: url('@/assets/login-bg.jpg') no-repeat center center;
+    background: url('@/assets/login-bg.webp') no-repeat center center;
     background-size: cover;
     display: flex;
     flex-direction: column;
