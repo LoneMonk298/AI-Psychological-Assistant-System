@@ -25,6 +25,7 @@ com\example\aiserver\controller\UserController.class
 com\example\aiserver\dto\EmailUpdateRequest.class
 com\example\aiserver\entity\SysUser.class
 com\example\aiserver\mapper\PsychologicalChatSessionMapper.class
+com\example\aiserver\config\JwtAuthInterceptor.class
 com\example\aiserver\entity\PsychologicalChatMessage.class
 com\example\aiserver\util\CurrentUserUtil.class
 com\example\aiserver\controller\KnowledgeController.class
